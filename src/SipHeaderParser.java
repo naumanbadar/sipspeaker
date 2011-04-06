@@ -10,7 +10,9 @@ public class SipHeaderParser {
 
 	public static void main(String[] args) {
 		log.info(TraceLoader.loadTraceString());
-		System.out.print(TraceLoader.loadTraceString());
+//		System.out.print(TraceLoader.loadTraceString());
+		System.out.print(System.getProperty("java.class.path"));
+		
 	}
 
 }
