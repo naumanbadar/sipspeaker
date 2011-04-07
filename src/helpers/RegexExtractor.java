@@ -3,9 +3,21 @@ package helpers;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author Nauman Badar <nauman.gwt@gmail.com>
+ * @created Apr 7, 2011
+ *
+ */
 public class RegexExtractor {
 
-	public static String extract(String string, String reg1, String reg2) {
+	/**
+	 * @param string
+	 * @param reg1
+	 * @param reg2
+	 * @param includeHead
+	 * @return
+	 */
+	public static String extract(String string, String reg1, String reg2, boolean includeHead) {
 		int startIndex, endIndex;
 		Pattern pattern1 = Pattern.compile(reg1);
 		Pattern pattern2 = Pattern.compile(reg2);
@@ -14,11 +26,15 @@ public class RegexExtractor {
 			return "";
 		}
 		startIndex = matcher.start();
-		matcher = pattern2.matcher(string);
+		int groupLength=matcher.group().length();
+		matcher = pattern2.matcher(string.substring(startIndex+groupLength));
 		if (!matcher.find()) {
 			return "";
 		}
 		endIndex = matcher.start();
-		return string.substring(startIndex, endIndex);
+		if (!includeHead) {
+			return string.substring(startIndex+groupLength, startIndex+groupLength+endIndex);
+		}
+		return string.substring(startIndex, startIndex+groupLength+endIndex);
 	}
 }

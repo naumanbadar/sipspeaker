@@ -17,11 +17,9 @@ public class Starter {
 
 		String sipHeaders = TraceLoader.loadTraceString();
 
-		Pattern pattern = Pattern.compile("Via");
-		Matcher matcher = pattern.matcher(sipHeaders);
-		StringBuilder builder = new StringBuilder(sipHeaders);
-
-		log.info(RegexExtractor.extract(sipHeaders, "Via", "\n"));
-
+		SipHeader sipHeader = new SipHeader();
+		sipHeader.load(sipHeaders);
+//		log.info(sipHeader.produceSIP());
+		System.out.println(sipHeader.produceSipInvite());
 	}
 }

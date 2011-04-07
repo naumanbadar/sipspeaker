@@ -19,7 +19,7 @@ public class TraceLoader {
 		String traceString = null;
 		try {
 			Properties prop = new Properties();
-			prop.load(new FileInputStream("/home/v10/naumanb/workspace/SIP Listener/properties/sip.properties"));
+			prop.load(new FileInputStream("properties/sip.properties"));
 			String traceFilePath = prop.getProperty("tracefilepath");
 			File file;
 			FileReader fr = new FileReader(file = new File(traceFilePath));

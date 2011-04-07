@@ -1,3 +1,5 @@
+import helpers.RegexExtractor;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,7 +18,12 @@ public class SipHeader {
 	private String cSeq;
 	private String from;
 	private String to;
-
+/**
+ * 
+ */
+public SipHeader() {
+contact = new Contact();
+}
 	public String getHead() {
 		return head;
 	}
@@ -91,9 +98,34 @@ public class SipHeader {
 	
 	
 	public void load(String receivedString) {
-		Pattern pattern = Pattern.compile("Via");
-		Matcher matcher = pattern.matcher(receivedString);
+		head = RegexExtractor.extract(receivedString, ".", "\n",true);
+		via = RegexExtractor.extract(receivedString, "Via", "\n",true);
+		contentLenght = RegexExtractor.extract(receivedString, "Content-Length: ", "\n",false);
+		contact.ipAddress=RegexExtractor.extract(receivedString, "Contact: <sip:", ":", false);
+		contact.port=RegexExtractor.extract(receivedString, "Contact: <sip:\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:", ">", false);
+		callID = RegexExtractor.extract(receivedString, "Call-ID:", "\n",true);
+		contentType = RegexExtractor.extract(receivedString, "Content-Type:", "\n",true);
+		cSeq = RegexExtractor.extract(receivedString, "CSeq:", "\n",true);
+		from = RegexExtractor.extract(receivedString, "From:", "\n",true);
+		to = RegexExtractor.extract(receivedString, "To:", "\n",true);
 		
+	}
+	
+	public String produceSipInvite(){
+		StringBuilder sip = new StringBuilder();
+		sip.append(head+"\r\n");
+		sip.append(via+"\r\n");
+		sip.append("Content-Length: "+contentLenght+"\r\n");
+		sip.append(contact+"\r\n");
+		sip.append(callID+"\r\n");
+		sip.append(contentType+"\r\n");
+		sip.append(cSeq+"\r\n");
+		sip.append(from+"\r\n");
+		sip.append("Max-Forwards: 70"+"\r\n");
+		sip.append(to+"\r\n");
+		
+		
+		return sip.toString();
 	}
 
 }
@@ -101,5 +133,13 @@ public class SipHeader {
 class Contact {
 	String ipAddress;
 	String port;
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return "Contact:<sip:"+ipAddress+":"+port+">";
+	}
 }
 
