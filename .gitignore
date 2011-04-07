@@ -3,3 +3,4 @@ admin.log
 .project
 .settings/
 bin/
+receivedDataFile

@@ -1,5 +1,9 @@
 import helpers.RegexExtractor;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,11 +19,32 @@ public class Starter {
 
 	public static void main(String[] args) {
 
-		String sipHeaders = TraceLoader.loadTraceString();
+//		String sipHeaders = TraceLoader.loadTraceString();
 
 		SipHeader sipHeader = new SipHeader();
-		sipHeader.load(sipHeaders);
-//		log.info(sipHeader.produceSIP());
-		System.out.println(sipHeader.produceSipInvite());
+//		sipHeader.load(sipHeaders);
+		// log.info(sipHeader.produceSIP());
+		try {
+			DatagramSocket datagramSocket = new DatagramSocket(5060);
+			byte byteBuffer[] = new byte[2000];
+			DatagramPacket datagramPacket = new DatagramPacket(byteBuffer, byteBuffer.length);
+			String receivedData = new String();
+			datagramSocket.receive(datagramPacket);
+			receivedData = new String(datagramPacket.getData());
+			
+			sipHeader.load(receivedData);
+			 System.out.println(sipHeader.produceSipInvite());
+			 TraceLoader.writeReceivedString(receivedData);
+			
+//			log.info(receivedData);
+
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }

@@ -98,16 +98,16 @@ contact = new Contact();
 	
 	
 	public void load(String receivedString) {
-		head = RegexExtractor.extract(receivedString, ".", "\n",true);
-		via = RegexExtractor.extract(receivedString, "Via", "\n",true);
-		contentLenght = RegexExtractor.extract(receivedString, "Content-Length: ", "\n",false);
+		head = RegexExtractor.extract(receivedString, ".", "\r\n",true);
+		via = RegexExtractor.extract(receivedString, "Via", "\r\n",true);
+		contentLenght = RegexExtractor.extract(receivedString, "Content-Length: ", "\r\n",false);
 		contact.ipAddress=RegexExtractor.extract(receivedString, "Contact: <sip:", ":", false);
 		contact.port=RegexExtractor.extract(receivedString, "Contact: <sip:\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:", ">", false);
-		callID = RegexExtractor.extract(receivedString, "Call-ID:", "\n",true);
-		contentType = RegexExtractor.extract(receivedString, "Content-Type:", "\n",true);
-		cSeq = RegexExtractor.extract(receivedString, "CSeq:", "\n",true);
-		from = RegexExtractor.extract(receivedString, "From:", "\n",true);
-		to = RegexExtractor.extract(receivedString, "To:", "\n",true);
+		callID = RegexExtractor.extract(receivedString, "Call-ID:", "\r\n",true);
+		contentType = RegexExtractor.extract(receivedString, "Content-Type:", "\r\n",true);
+		cSeq = RegexExtractor.extract(receivedString, "CSeq:", "\r\n",true);
+		from = RegexExtractor.extract(receivedString, "From:", "\r\n",true);
+		to = RegexExtractor.extract(receivedString, "To:", "\r\n",true);
 		
 	}
 	
@@ -128,6 +128,10 @@ contact = new Contact();
 		return sip.toString();
 	}
 
+	public String produceSipTrying(){
+		StringBuilder sip = new StringBuilder();
+		return sip.toString();
+	}
 }
 
 class Contact {
