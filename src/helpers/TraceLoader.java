@@ -1,3 +1,4 @@
+package helpers;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,7 +43,7 @@ public class TraceLoader {
 		return traceString;
 	}
 
-	static void writeReceivedString(String receivedData) {
+	public static void writeReceivedString(String receivedData) {
 		try {
 			Properties prop = new Properties();
 			prop.load(new FileInputStream("properties/sip.properties"));

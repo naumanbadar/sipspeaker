@@ -1,14 +1,16 @@
-import helpers.RegexExtractor;
+package answerMachine;
+import helpers.TraceLoader;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+
+import sipParser.SipHeader;
+
 
 /**
  * @author Nauman Badar
@@ -39,24 +41,24 @@ public class Starter {
 			System.out.println(sipHeader.produceSipTrying());
 			System.out.println(sipHeader.produceSipRinging());
 			TraceLoader.writeReceivedString(receivedData);
-			System.out.println("port identified:"+sipHeader.getContact().port);
+			System.out.println("port identified:"+sipHeader.getContact().getPort());
 			
 
 			byteBuffer = sipHeader.produceSipTrying().getBytes();
-			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().ipAddress));
-			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().port));
+			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
+			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
 			datagramPacket.setData(byteBuffer);
 			datagramSocket.send(datagramPacket);
 
 			byteBuffer = sipHeader.produceSipRinging().getBytes();
-			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().ipAddress));
-			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().port));
+			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
+			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
 			datagramPacket.setData(byteBuffer);
 			datagramSocket.send(datagramPacket);
 			
 			byteBuffer = sipHeader.produceSipOK().getBytes();
-			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().ipAddress));
-			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().port));
+			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
+			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
 			datagramPacket.setData(byteBuffer);
 			datagramSocket.send(datagramPacket);
 			

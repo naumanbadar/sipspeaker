@@ -1,3 +1,4 @@
+package sipParser;
 import helpers.RegexExtractor;
 
 import java.net.InetAddress;
@@ -252,21 +253,5 @@ public class SipHeader {
 
 	public String getSdpData() {
 		return sdpData;
-	}
-}
-
-class Contact {
-	String ipAddress;
-	String port;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return "Contact:<sip:" + ipAddress + ":" + port + ">";
 	}
 }

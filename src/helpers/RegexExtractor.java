@@ -17,6 +17,9 @@ public class RegexExtractor {
 	 * @param includeHead
 	 * @return
 	 */
+	/***
+	 * Extracts the expressing between two given REGEX
+	 */
 	public static String extract(String string, String reg1, String reg2, boolean includeHead) {
 		int startIndex, endIndex;
 		Pattern pattern1 = Pattern.compile(reg1);
