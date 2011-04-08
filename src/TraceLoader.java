@@ -1,6 +1,8 @@
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -45,11 +47,15 @@ public class TraceLoader {
 			Properties prop = new Properties();
 			prop.load(new FileInputStream("properties/sip.properties"));
 			String receivedDataFilePath = prop.getProperty("receivedDataFilePath");
-			File file = new File(receivedDataFilePath);
-			PrintWriter pw = new PrintWriter(file, "UTF-8");
-			pw.write(receivedData);
-			pw.close();
+//			File file = new File(receivedDataFilePath);
+//			PrintWriter pw = new PrintWriter(file, "UTF-8");
+//			pw.write(receivedData);
+//			pw.close();
 		
+			FileOutputStream fileOutputStream = new FileOutputStream(receivedDataFilePath);
+			DataOutputStream dataOutputStream = new DataOutputStream(fileOutputStream);
+			dataOutputStream.writeUTF(receivedData);
+			dataOutputStream.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

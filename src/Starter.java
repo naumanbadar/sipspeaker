@@ -3,6 +3,7 @@ import helpers.RegexExtractor;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,24 +20,50 @@ public class Starter {
 
 	public static void main(String[] args) {
 
-//		String sipHeaders = TraceLoader.loadTraceString();
+		// String sipHeaders = TraceLoader.loadTraceString();
 
-		SipHeader sipHeader = new SipHeader();
-//		sipHeader.load(sipHeaders);
+		// sipHeader.load(sipHeaders);
 		// log.info(sipHeader.produceSIP());
 		try {
-			DatagramSocket datagramSocket = new DatagramSocket(5060);
+			DatagramSocket datagramSocket = new DatagramSocket(5061);
 			byte byteBuffer[] = new byte[2000];
 			DatagramPacket datagramPacket = new DatagramPacket(byteBuffer, byteBuffer.length);
 			String receivedData = new String();
 			datagramSocket.receive(datagramPacket);
 			receivedData = new String(datagramPacket.getData());
+
+			SipHeader sipHeader = new SipHeader("5061","586595975687452354", receivedData);
+
+			System.out.println(sipHeader.produceSipInvite());
+			System.out.println(sipHeader.getSdpData());
+			System.out.println(sipHeader.produceSipTrying());
+			System.out.println(sipHeader.produceSipRinging());
+			TraceLoader.writeReceivedString(receivedData);
+			System.out.println("port identified:"+sipHeader.getContact().port);
 			
-			sipHeader.load(receivedData);
-			 System.out.println(sipHeader.produceSipInvite());
-			 TraceLoader.writeReceivedString(receivedData);
+
+			byteBuffer = sipHeader.produceSipTrying().getBytes();
+			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().ipAddress));
+			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().port));
+			datagramPacket.setData(byteBuffer);
+			datagramSocket.send(datagramPacket);
+
+			byteBuffer = sipHeader.produceSipRinging().getBytes();
+			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().ipAddress));
+			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().port));
+			datagramPacket.setData(byteBuffer);
+			datagramSocket.send(datagramPacket);
 			
-//			log.info(receivedData);
+			byteBuffer = sipHeader.produceSipOK().getBytes();
+			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().ipAddress));
+			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().port));
+			datagramPacket.setData(byteBuffer);
+			datagramSocket.send(datagramPacket);
+			
+			
+			
+			
+			// log.info(receivedData);
 
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
