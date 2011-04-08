@@ -2,6 +2,7 @@ import helpers.RegexExtractor;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.UUID;
 
 /**
  * @author Nauman Badar
@@ -27,21 +28,32 @@ public class SipHeader {
 	private String appendedVia;
 	private String appendedTo;
 	
+	private String localUser;
+	private String localServer;
+	
 
 	/**
  * 
  */
-	public SipHeader(String localPort,String tag, String receivedData) {
+	/**
+	 * @param localPort
+	 * @param localUser
+	 * @param localServer
+	 * @param receivedData
+	 */
+	public SipHeader(String localPort,String localUser, String localServer,String receivedData) {
 		contact = new Contact();
 		this.localPort = localPort;
 		this.receivedData = receivedData;
-		this.tag=tag;
+		this.tag=UUID.randomUUID().toString().replaceAll("-", "");
 		try {
 			this.localIP = InetAddress.getLocalHost().getHostAddress();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		this.localUser=localUser;
+		this.localServer=localServer;
 		load();
 	}
 
@@ -138,6 +150,9 @@ public class SipHeader {
 		sdpData=sdpData.trim();
 		
 		appendedTo=to.concat(";tag="+tag);
+		StringBuilder appendedToBuilder = new StringBuilder(appendedTo);
+		appendedTo=appendedToBuilder.insert(4, "\""+localUser+"\"").toString();
+		
 	}
 
 	public String produceSipInvite() {
@@ -165,6 +180,7 @@ public class SipHeader {
 		sip.append("CSeq: 1 INVITE" + "\r\n");
 		sip.append(from + "\r\n");
 		sip.append(appendedTo + "\r\n");
+		sip.append("Server: "+localServer + "\r\n");
 		sip.append("\r\n");
 
 		return sip.toString();
@@ -181,6 +197,7 @@ public class SipHeader {
 		sip.append("CSeq: 1 INVITE" + "\r\n");
 		sip.append(from + "\r\n");
 		sip.append(appendedTo + "\r\n");
+		sip.append("Server: "+localServer + "\r\n");
 		sip.append("\r\n");
 
 		return sip.toString();
@@ -197,6 +214,7 @@ public class SipHeader {
 		sip.append("CSeq: 1 INVITE" + "\r\n");
 		sip.append(from + "\r\n");
 		sip.append(appendedTo + "\r\n");
+		sip.append("Server: "+localServer + "\r\n");
 		sip.append("\r\n");
 		sip.append(sdpData);
 		

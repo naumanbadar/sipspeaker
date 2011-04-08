@@ -32,7 +32,7 @@ public class Starter {
 			datagramSocket.receive(datagramPacket);
 			receivedData = new String(datagramPacket.getData());
 
-			SipHeader sipHeader = new SipHeader("5061","586595975687452354", receivedData);
+			SipHeader sipHeader = new SipHeader("5061","IBN BAD'R", "IK2213_SIP_SPEAKER", receivedData);
 
 			System.out.println(sipHeader.produceSipInvite());
 			System.out.println(sipHeader.getSdpData());
