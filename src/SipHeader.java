@@ -172,54 +172,48 @@ public class SipHeader {
 	}
 
 	public String produceSipTrying() {
-		StringBuilder sip = new StringBuilder();
-		sip.append("SIP/2.0 100 Trying" + "\r\n");
-		sip.append(appendedVia + "\r\n");
-		sip.append("Content-Length: 0" + "\r\n");
-		sip.append(callID + "\r\n");
-		sip.append("CSeq: 1 INVITE" + "\r\n");
-		sip.append(from + "\r\n");
-		sip.append(appendedTo + "\r\n");
-		sip.append("Server: "+localServer + "\r\n");
-		sip.append("\r\n");
-
-		return sip.toString();
+		StringBuilder sipHeaders = new StringBuilder();
+		sipHeaders.append("SIP/2.0 100 Trying" + "\r\n");
+		appendCommonHeaders(sipHeaders);
+		sipHeaders.append("\r\n");
+		return sipHeaders.toString();
 	}
 
 	public String produceSipRinging() {
-
-		StringBuilder sip = new StringBuilder();
-		sip.append("SIP/2.0 180 Ringing" + "\r\n");
-		sip.append(appendedVia + "\r\n");
-		sip.append("Content-Length: 0" + "\r\n");
-		sip.append("Contact: <sip:" + localIP + ":" + localPort + ">" + "\r\n");
-		sip.append(callID + "\r\n");
-		sip.append("CSeq: 1 INVITE" + "\r\n");
-		sip.append(from + "\r\n");
-		sip.append(appendedTo + "\r\n");
-		sip.append("Server: "+localServer + "\r\n");
-		sip.append("\r\n");
-
-		return sip.toString();
+		
+		StringBuilder sipHeaders = new StringBuilder();
+		sipHeaders.append("SIP/2.0 180 Ringing" + "\r\n");
+		appendCommonHeaders(sipHeaders);
+		sipHeaders.append("\r\n");
+		return sipHeaders.toString();
 	}
 	public String produceSipOK() {
 		
-		StringBuilder sip = new StringBuilder();
-		sip.append("SIP/2.0 200 OK" + "\r\n");
-		sip.append(appendedVia + "\r\n");
-		sip.append("Content-Length: "+sdpData.length() + "\r\n");
-		sip.append("Contact: <sip:" + localIP + ":" + localPort + ">" + "\r\n");
-		sip.append(callID + "\r\n");
-		sip.append("Content-Type: application/sdp"+ "\r\n");
-		sip.append("CSeq: 1 INVITE" + "\r\n");
-		sip.append(from + "\r\n");
-		sip.append(appendedTo + "\r\n");
-		sip.append("Server: "+localServer + "\r\n");
-		sip.append("\r\n");
-		sip.append(sdpData);
+		StringBuilder sipHeaders = new StringBuilder();
+		sipHeaders.append("SIP/2.0 200 OK" + "\r\n");
+		appendCommonHeaders(sipHeaders);
+		sipHeaders.append("Content-Type: application/sdp"+ "\r\n");
 		
-		return sip.toString();
+		sipHeaders.append("\r\n");
+		sipHeaders.append(sdpData);
+		
+		return sipHeaders.toString();
 	}
+	/**
+	 * @param sipHeaders
+	 */
+	private void appendCommonHeaders(StringBuilder sipHeaders) {
+		sipHeaders.append(appendedVia + "\r\n");
+		sipHeaders.append("Content-Length: 0" + "\r\n");
+		sipHeaders.append("Contact: <sip:" + localIP + ":" + localPort + ">" + "\r\n");
+		sipHeaders.append(callID + "\r\n");
+		sipHeaders.append("CSeq: 1 INVITE" + "\r\n");
+		sipHeaders.append(from + "\r\n");
+		sipHeaders.append(appendedTo + "\r\n");
+		sipHeaders.append("Server: "+localServer + "\r\n");
+		
+	}
+
 
 	/**
 	 * @return the localPort
