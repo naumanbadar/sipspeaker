@@ -5,11 +5,7 @@ package answerMachine;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.MalformedURLException;
-import java.net.SocketException;
-import java.util.regex.Pattern;
 
 import javax.media.CannotRealizeException;
 import javax.media.DataSink;
@@ -26,54 +22,95 @@ import javax.media.format.AudioFormat;
 import javax.media.protocol.ContentDescriptor;
 import javax.media.protocol.DataSource;
 
-import org.apache.log4j.Logger;
-
 /**
  * @author Nauman Badar <nauman.gwt@gmail.com>
- * @created Apr 8, 2011
+ * @created Apr 12, 2011
  * 
  */
-public class PacketReciever {
-	private final static Logger log = Logger.getLogger(PacketReciever.class.getName());
+public class Speaker implements Runnable {
+	private String ipAddress;
+	private String port;
+	private String pathToAudio;
 
 	/**
-	 * @param args
+	 * @param ipAddress
+	 * @param port
+	 * @param pathToAudio
 	 */
-	public static void sendSound(String[] args) {
-		// try {
-		//
-		// DatagramSocket datagramSocket = new DatagramSocket(5061);
-		// CallHandler callHandler = new CallHandler();
-		//
-		// while (true) {
-		// byte byteBuffer[] = new byte[2000];
-		// DatagramPacket datagramPacket = new DatagramPacket(byteBuffer,
-		// byteBuffer.length);
-		// datagramSocket.receive(datagramPacket);
-		// callHandler.handle(datagramPacket);
-		//
-		//
-		// }
-		//
-		//
-		//
-		// } catch (SocketException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+	public Speaker(String ipAddress, String port, String pathToAudio) {
+		super();
+		this.ipAddress = ipAddress;
+		this.port = port;
+		this.pathToAudio = pathToAudio;
+	}
+
+	/**
+	 * @return the ipAddress
+	 */
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	/**
+	 * @param ipAddress
+	 *            the ipAddress to set
+	 */
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+
+	/**
+	 * @return the port
+	 */
+	public String getPort() {
+		return port;
+	}
+
+	/**
+	 * @param port
+	 *            the port to set
+	 */
+	public void setPort(String port) {
+		this.port = port;
+	}
+
+	/**
+	 * @return the pathToAudio
+	 */
+	public String getPathToAudio() {
+		return pathToAudio;
+	}
+
+	/**
+	 * @param pathToAudio
+	 *            the pathToAudio to set
+	 */
+	public void setPathToAudio(String pathToAudio) {
+		this.pathToAudio = pathToAudio;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Runnable#run()
+	 */
+	@Override
+	public void run() {
+		answer();
+	}
+
+	private void answer() {
 		try {
+			
 			final Format[] formats = new Format[] { new AudioFormat(AudioFormat.GSM_RTP) };
 			final ContentDescriptor contentDescriptor = new ContentDescriptor(ContentDescriptor.RAW_RTP);
-			File mediaFile = new File("/home/naumanbadar/Downloads/chaotic.wav");
+			File mediaFile = new File(pathToAudio);
 			// File mediaFile = new File("properties/surahBayyinah.mp3");
 			DataSource dataSource = Manager.createDataSource(new MediaLocator(mediaFile.toURL()));
 
 			Processor processor = Manager.createRealizedProcessor(new ProcessorModel(dataSource, formats, contentDescriptor));
 
-			DataSink dataSink = Manager.createDataSink(processor.getDataOutput(), new MediaLocator("rtp://127.0.0.1:49152/audio"));
+			DataSink dataSink = Manager.createDataSink(processor.getDataOutput(), new MediaLocator("rtp://"+ipAddress+":"+port+"/audio"));
 
 			processor.start();
 			dataSink.open();
@@ -115,31 +152,5 @@ public class PacketReciever {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
-
-	public static void receive(DatagramSocket datagramSocket) {
-
-		try {
-			byte byteBuffer[] = new byte[2000];
-			DatagramPacket datagramPacket = new DatagramPacket(byteBuffer, byteBuffer.length);
-			String receivedData = new String();
-			datagramSocket.receive(datagramPacket);
-			receivedData = new String(datagramPacket.getData(),"UTF-8");
-			receivedData=receivedData.trim();
-
-			if (receivedData.indexOf("INVITE sip:")==0) {
-			 log.info("received invite from: "+datagramPacket.getAddress().getHostAddress()+":"+datagramPacket.getPort());
-			 CallHandler.handleInvite(receivedData, datagramPacket, datagramSocket);
-			}
-
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 }

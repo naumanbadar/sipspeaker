@@ -34,6 +34,7 @@ public class SipHeader {
 
 	private String localUser;
 	private String localServer;
+	private String sipPort;
 
 	/**
  * 
@@ -170,6 +171,7 @@ public class SipHeader {
 		matcherToChangePort.find();
 		StringBuilder sdpDataStringBuilder = new StringBuilder(sdpData);
 		String portString = matcherToChangePort.group().substring(8).trim();
+		sipPort=portString;
 		int portInt = Integer.parseInt(portString);
 		portInt+=36;
 		portString = Integer.toString(portInt);
@@ -277,5 +279,13 @@ public class SipHeader {
 
 	public String getSdpData() {
 		return sdpData;
+	}
+
+	public void setSipPort(String sipPort) {
+		this.sipPort = sipPort;
+	}
+
+	public String getSipPort() {
+		return sipPort;
 	}
 }
