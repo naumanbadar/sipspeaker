@@ -1,4 +1,5 @@
 package answerMachine;
+
 import helpers.TraceLoader;
 
 import java.io.IOException;
@@ -10,7 +11,6 @@ import java.net.SocketException;
 import org.apache.log4j.Logger;
 
 import sipParser.SipHeader;
-
 
 /**
  * @author Nauman Badar
@@ -33,17 +33,13 @@ public class Starter {
 			String receivedData = new String();
 			datagramSocket.receive(datagramPacket);
 			receivedData = new String(datagramPacket.getData());
+			log.info("*********************************************Received Data\n" + receivedData.trim());
+			SipHeader sipHeader = new SipHeader("5061", "IBN BAD'R", "IK2213_SIP_SPEAKER", receivedData);
 
-			SipHeader sipHeader = new SipHeader("5061","IBN BAD'R", "IK2213_SIP_SPEAKER", receivedData);
-
-			System.out.println(sipHeader.produceSipInvite());
-			System.out.println(sipHeader.getSdpData());
-			System.out.println(sipHeader.produceSipTrying());
-			System.out.println(sipHeader.produceSipRinging());
 			TraceLoader.writeReceivedString(receivedData);
-			System.out.println("port identified:"+sipHeader.getContact().getPort());
+			log.info("*********************************************Sent OK\n" + sipHeader.produceSipOK());
 			
-
+			
 			byteBuffer = sipHeader.produceSipTrying().getBytes();
 			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
 			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
@@ -55,16 +51,15 @@ public class Starter {
 			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
 			datagramPacket.setData(byteBuffer);
 			datagramSocket.send(datagramPacket);
-			
+
 			byteBuffer = sipHeader.produceSipOK().getBytes();
 			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
 			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
 			datagramPacket.setData(byteBuffer);
 			datagramSocket.send(datagramPacket);
-			
-			
-			
-			
+
+			datagramSocket.close();
+
 			// log.info(receivedData);
 
 		} catch (SocketException e) {

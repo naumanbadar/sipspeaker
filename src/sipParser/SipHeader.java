@@ -1,9 +1,12 @@
 package sipParser;
+
 import helpers.RegexExtractor;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Nauman Badar
@@ -28,10 +31,9 @@ public class SipHeader {
 	private String tag;
 	private String appendedVia;
 	private String appendedTo;
-	
+
 	private String localUser;
 	private String localServer;
-	
 
 	/**
  * 
@@ -42,19 +44,19 @@ public class SipHeader {
 	 * @param localServer
 	 * @param receivedData
 	 */
-	public SipHeader(String localPort,String localUser, String localServer,String receivedData) {
+	public SipHeader(String localPort, String localUser, String localServer, String receivedData) {
 		contact = new Contact();
 		this.localPort = localPort;
 		this.receivedData = receivedData;
-		this.tag=UUID.randomUUID().toString().replaceAll("-", "");
+		this.tag = UUID.randomUUID().toString().replaceAll("-", "");
 		try {
 			this.localIP = InetAddress.getLocalHost().getHostAddress();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		this.localUser=localUser;
-		this.localServer=localServer;
+		this.localUser = localUser;
+		this.localServer = localServer;
 		load();
 	}
 
@@ -145,15 +147,34 @@ public class SipHeader {
 		StringBuilder viaBuilder = new StringBuilder(via);
 		int indexOfrport = via.indexOf("rport");
 		viaBuilder.insert(indexOfrport + 5, "=" + contact.port + ";" + "received=" + contact.ipAddress);
-//		viaBuilder.insert(indexOfrport + 5, "=" + localPort + ";" + "received=" + contact.ipAddress);
+		// viaBuilder.insert(indexOfrport + 5, "=" + localPort + ";" +
+		// "received=" + contact.ipAddress);
 		appendedVia = viaBuilder.toString();
-		sdpData=receivedData.substring(receivedData.indexOf("\r\n\r\n"));
-		sdpData=sdpData.trim();
 		
-		appendedTo=to.concat(";tag="+tag);
+		changePortInSdp();
+
+		appendedTo = to.concat(";tag=" + tag);
 		StringBuilder appendedToBuilder = new StringBuilder(appendedTo);
-		appendedTo=appendedToBuilder.insert(4, "\""+localUser+"\"").toString();
-		
+		appendedTo = appendedToBuilder.insert(4, "\"" + localUser + "\"").toString();
+
+	}
+
+	/**
+	 * 
+	 */
+	private void changePortInSdp() {
+		sdpData = receivedData.substring(receivedData.indexOf("\r\n\r\n"));
+		sdpData = sdpData.trim();
+		Pattern patternToChangePort = Pattern.compile("m=audio \\d{5,5} ");
+		Matcher matcherToChangePort = patternToChangePort.matcher(sdpData);
+		matcherToChangePort.find();
+		StringBuilder sdpDataStringBuilder = new StringBuilder(sdpData);
+		String portString = matcherToChangePort.group().substring(8).trim();
+		int portInt = Integer.parseInt(portString);
+		portInt+=36;
+		portString = Integer.toString(portInt);
+		sdpDataStringBuilder.replace(matcherToChangePort.start(), matcherToChangePort.start()+matcherToChangePort.group().length(), "m=audio "+portString+" ");
+		sdpData = sdpDataStringBuilder.toString();
 	}
 
 	public String produceSipInvite() {
@@ -176,45 +197,48 @@ public class SipHeader {
 		StringBuilder sipHeaders = new StringBuilder();
 		sipHeaders.append("SIP/2.0 100 Trying" + "\r\n");
 		appendCommonHeaders(sipHeaders);
+		sipHeaders.append("Content-Length: 0" + "\r\n");
 		sipHeaders.append("\r\n");
 		return sipHeaders.toString();
 	}
 
 	public String produceSipRinging() {
-		
+
 		StringBuilder sipHeaders = new StringBuilder();
 		sipHeaders.append("SIP/2.0 180 Ringing" + "\r\n");
 		appendCommonHeaders(sipHeaders);
+		sipHeaders.append("Content-Length: 0" + "\r\n");
 		sipHeaders.append("\r\n");
 		return sipHeaders.toString();
 	}
+
 	public String produceSipOK() {
-		
+
 		StringBuilder sipHeaders = new StringBuilder();
 		sipHeaders.append("SIP/2.0 200 OK" + "\r\n");
 		appendCommonHeaders(sipHeaders);
-		sipHeaders.append("Content-Type: application/sdp"+ "\r\n");
-		
+		sipHeaders.append("Content-Length: " + sdpData.length() + "\r\n");
+		sipHeaders.append("Content-Type: application/sdp" + "\r\n");
 		sipHeaders.append("\r\n");
 		sipHeaders.append(sdpData);
-		
+
 		return sipHeaders.toString();
 	}
+
 	/**
 	 * @param sipHeaders
 	 */
 	private void appendCommonHeaders(StringBuilder sipHeaders) {
+		sipHeaders.append("Max-Forwards: 70" + "\r\n");
 		sipHeaders.append(appendedVia + "\r\n");
-		sipHeaders.append("Content-Length: 0" + "\r\n");
 		sipHeaders.append("Contact: <sip:" + localIP + ":" + localPort + ">" + "\r\n");
 		sipHeaders.append(callID + "\r\n");
 		sipHeaders.append("CSeq: 1 INVITE" + "\r\n");
 		sipHeaders.append(from + "\r\n");
 		sipHeaders.append(appendedTo + "\r\n");
-		sipHeaders.append("Server: "+localServer + "\r\n");
-		
-	}
+		sipHeaders.append("Server: " + localServer + "\r\n");
 
+	}
 
 	/**
 	 * @return the localPort
