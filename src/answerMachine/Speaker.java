@@ -5,6 +5,9 @@ package answerMachine;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 
 import javax.media.CannotRealizeException;
@@ -22,26 +25,35 @@ import javax.media.format.AudioFormat;
 import javax.media.protocol.ContentDescriptor;
 import javax.media.protocol.DataSource;
 
+import org.apache.log4j.Logger;
+
+import sipParser.SipHeader;
+
 /**
  * @author Nauman Badar <nauman.gwt@gmail.com>
  * @created Apr 12, 2011
  * 
  */
 public class Speaker implements Runnable {
+	private final static Logger log = Logger.getLogger(Speaker.class.getName());
 	private String ipAddress;
 	private String port;
 	private String pathToAudio;
+	private SipHeader sipHeader;
+	private DatagramSocket datagramSocket;
 
 	/**
-	 * @param ipAddress
-	 * @param port
+	 * @param sipHeader
+	 * @param datagramSocket
 	 * @param pathToAudio
 	 */
-	public Speaker(String ipAddress, String port, String pathToAudio) {
+	public Speaker(SipHeader sipHeader, DatagramSocket datagramSocket, String pathToAudio) {
 		super();
-		this.ipAddress = ipAddress;
-		this.port = port;
+		this.sipHeader = sipHeader;
+		this.datagramSocket = datagramSocket;
 		this.pathToAudio = pathToAudio;
+		this.ipAddress = sipHeader.getContact().getIpAddress();
+		this.port = sipHeader.getSipPort();
 	}
 
 	/**
@@ -102,6 +114,19 @@ public class Speaker implements Runnable {
 	private void answer() {
 		try {
 			
+//			Thread.sleep(8000);
+			
+			byte[] byteBuffer = sipHeader.produceSipOK().getBytes();
+			DatagramPacket datagramPacket = new DatagramPacket(byteBuffer, byteBuffer.length);
+			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
+			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
+			datagramPacket.setData(byteBuffer);
+			datagramSocket.send(datagramPacket);
+			
+			
+			
+			
+			
 			final Format[] formats = new Format[] { new AudioFormat(AudioFormat.GSM_RTP) };
 			final ContentDescriptor contentDescriptor = new ContentDescriptor(ContentDescriptor.RAW_RTP);
 			File mediaFile = new File(pathToAudio);
@@ -126,6 +151,14 @@ public class Speaker implements Runnable {
 			dataSink.close();
 			processor.stop();
 			processor.close();
+			
+			byteBuffer = sipHeader.produceBye(sipHeader.getContact().getIpAddress(), sipHeader.getContact().getPort()).getBytes();
+			datagramPacket = new DatagramPacket(byteBuffer, byteBuffer.length);
+			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
+			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
+			datagramPacket.setData(byteBuffer);
+			datagramSocket.send(datagramPacket);
+			log.info("BYE SENT");
 
 		} catch (NoDataSourceException e) {
 			// TODO Auto-generated catch block

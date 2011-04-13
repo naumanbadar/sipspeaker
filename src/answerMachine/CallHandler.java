@@ -37,11 +37,11 @@ public class CallHandler implements Runnable {
 		try {
 
 
-			log.info("*********************************************Received Data\n" + receivedData.trim());
+//			log.info("*********************************************Received Data\n" + receivedData.trim());
 			SipHeader sipHeader = new SipHeader("5061", "IBN BAD'R", "IK2213_SIP_SPEAKER", receivedData);
 
 			TraceLoader.writeReceivedString(receivedData);
-			log.info("*********************************************Sent OK\n" + sipHeader.produceSipOK());
+//			log.info("*********************************************Sent OK\n" + sipHeader.produceSipOK());
 
 			byte[] byteBuffer = sipHeader.produceSipTrying().getBytes();
 			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
@@ -55,14 +55,15 @@ public class CallHandler implements Runnable {
 			datagramPacket.setData(byteBuffer);
 			datagramSocket.send(datagramPacket);
 
-			byteBuffer = sipHeader.produceSipOK().getBytes();
-			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
-			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
-			datagramPacket.setData(byteBuffer);
-			datagramSocket.send(datagramPacket);
+//			byteBuffer = sipHeader.produceSipOK().getBytes();
+//			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
+//			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
+//			datagramPacket.setData(byteBuffer);
+//			datagramSocket.send(datagramPacket);
 
 			
-			Thread speakerThread = new Thread(new Speaker(sipHeader.getContact().getIpAddress(), sipHeader.getSipPort(), "/home/naumanbadar/Downloads/chaotic.wav"));
+//			Thread speakerThread = new Thread(new Speaker(sipHeader.getContact().getIpAddress(), sipHeader.getSipPort(), "/home/naumanbadar/Downloads/chaotic.wav"));
+			Thread speakerThread = new Thread(new Speaker(sipHeader, datagramSocket, "/home/naumanbadar/Downloads/chaotic.wav"));
 			speakerThread.start();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block

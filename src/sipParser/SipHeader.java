@@ -151,7 +151,7 @@ public class SipHeader {
 		// viaBuilder.insert(indexOfrport + 5, "=" + localPort + ";" +
 		// "received=" + contact.ipAddress);
 		appendedVia = viaBuilder.toString();
-		
+
 		changePortInSdp();
 
 		appendedTo = to.concat(";tag=" + tag);
@@ -171,11 +171,11 @@ public class SipHeader {
 		matcherToChangePort.find();
 		StringBuilder sdpDataStringBuilder = new StringBuilder(sdpData);
 		String portString = matcherToChangePort.group().substring(8).trim();
-		sipPort=portString;
+		sipPort = portString;
 		int portInt = Integer.parseInt(portString);
-		portInt+=36;
+		portInt += 36;
 		portString = Integer.toString(portInt);
-		sdpDataStringBuilder.replace(matcherToChangePort.start(), matcherToChangePort.start()+matcherToChangePort.group().length(), "m=audio "+portString+" ");
+		sdpDataStringBuilder.replace(matcherToChangePort.start(), matcherToChangePort.start() + matcherToChangePort.group().length(), "m=audio " + portString + " ");
 		sdpData = sdpDataStringBuilder.toString();
 	}
 
@@ -219,10 +219,32 @@ public class SipHeader {
 		StringBuilder sipHeaders = new StringBuilder();
 		sipHeaders.append("SIP/2.0 200 OK" + "\r\n");
 		appendCommonHeaders(sipHeaders);
-		sipHeaders.append("Content-Length: " + sdpData.length() + "\r\n");
+		// sipHeaders.append("Content-Length: " + sdpData.length() + "\r\n");
+		sipHeaders.append("Content-Length: 0" + "\r\n");
 		sipHeaders.append("Content-Type: application/sdp" + "\r\n");
 		sipHeaders.append("\r\n");
-		sipHeaders.append(sdpData);
+		// sipHeaders.append(sdpData);
+
+		return sipHeaders.toString();
+	}
+
+	public String produceBye(String ipAddress, String port) {
+
+		StringBuilder sipHeaders = new StringBuilder();
+		sipHeaders.append("BYE sip:" + ipAddress + ":" + port + " SIP/2.0" + "\r\n");
+		sipHeaders.append("Max-Forwards: 70" + "\r\n");
+		try {
+			sipHeaders.append("Via: SIP/2.0/UDP " + InetAddress.getLocalHost().getHostAddress() + ";rport;branch=" + UUID.randomUUID().toString().replaceAll("-", "") + "\r\n");
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		sipHeaders.append(callID + "\r\n");
+		sipHeaders.append("CSeq: 1 BYE" + "\r\n");
+		sipHeaders.append("From: " + appendedTo.substring(appendedTo.indexOf("<")) + "\r\n");
+		sipHeaders.append("To: " + from.substring(6) + "\r\n");
+		sipHeaders.append("Server: " + localServer + "\r\n");
+		sipHeaders.append("Content-Length: 0" + "\r\n");
+		sipHeaders.append("\r\n");
 
 		return sipHeaders.toString();
 	}
@@ -232,7 +254,7 @@ public class SipHeader {
 	 */
 	private void appendCommonHeaders(StringBuilder sipHeaders) {
 		sipHeaders.append("Max-Forwards: 70" + "\r\n");
-		sipHeaders.append(appendedVia + "\r\n");
+		sipHeaders.append(via + "\r\n");
 		sipHeaders.append("Contact: <sip:" + localIP + ":" + localPort + ">" + "\r\n");
 		sipHeaders.append(callID + "\r\n");
 		sipHeaders.append("CSeq: 1 INVITE" + "\r\n");
