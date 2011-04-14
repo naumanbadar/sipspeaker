@@ -128,8 +128,9 @@ public class PacketReciever {
 			receivedData = new String(datagramPacket.getData(),"UTF-8");
 			receivedData=receivedData.trim();
 
-			if (receivedData.indexOf("INVITE sip:")==0) {
+			if (receivedData.indexOf("INVITE sip:nauman")==0) {
 			 log.info("received invite from: "+datagramPacket.getAddress().getHostAddress()+":"+datagramPacket.getPort());
+			 log.info("\n"+receivedData);
 			 CallHandler.handleInvite(receivedData, datagramPacket, datagramSocket);
 			}
 

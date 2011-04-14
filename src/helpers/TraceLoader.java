@@ -24,7 +24,7 @@ public class TraceLoader {
 		String traceString = null;
 		try {
 			Properties prop = new Properties();
-			prop.load(new FileInputStream("properties/sip.properties"));
+			prop.load(new FileInputStream("sip.properties"));
 			String traceFilePath = prop.getProperty("tracefilepath");
 			File file;
 			FileReader fr = new FileReader(file = new File(traceFilePath));
@@ -46,7 +46,7 @@ public class TraceLoader {
 	public static void writeReceivedString(String receivedData) {
 		try {
 			Properties prop = new Properties();
-			prop.load(new FileInputStream("properties/sip.properties"));
+			prop.load(new FileInputStream("sip.properties"));
 			String receivedDataFilePath = prop.getProperty("receivedDataFilePath");
 //			File file = new File(receivedDataFilePath);
 //			PrintWriter pw = new PrintWriter(file, "UTF-8");

@@ -13,14 +13,13 @@ import java.net.SocketException;
  */
 public class MachineStarter {
 	public static void main(String[] args) {
-		
 		try {
 			DatagramSocket datagramSocket;
 			datagramSocket = new DatagramSocket(5061);
-		while (true) {
+			while (true) {
 
-			PacketReciever.receive(datagramSocket);
-		}
+				PacketReciever.receive(datagramSocket);
+			}
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
