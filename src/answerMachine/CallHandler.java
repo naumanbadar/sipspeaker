@@ -24,14 +24,6 @@ import sipParser.SipHeader;
 public class CallHandler implements Runnable {
 	private final static Logger log = Logger.getLogger(CallHandler.class.getName());
 
-	public void handle(DatagramPacket datagramPacket) {
-
-		String receivedData = new String(datagramPacket.getData());
-
-		if (Pattern.matches("^INVITE sip:.*", receivedData)) {
-			log.info("received invite from: " + datagramPacket.getAddress().getHostAddress());
-		}
-	}
 
 	public static void handleInvite(String receivedData, DatagramPacket datagramPacket, DatagramSocket datagramSocket) {
 		try {
@@ -40,7 +32,6 @@ public class CallHandler implements Runnable {
 //			log.info("*********************************************Received Data\n" + receivedData.trim());
 			SipHeader sipHeader = new SipHeader("5061", "IBN BAD'R", "IK2213_SIP_SPEAKER", receivedData);
 
-			TraceLoader.writeReceivedString(receivedData);
 //			log.info("*********************************************Sent OK\n" + sipHeader.produceSipOK());
 
 			byte[] byteBuffer = sipHeader.produceSipTrying().getBytes();

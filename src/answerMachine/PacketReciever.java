@@ -130,7 +130,7 @@ public class PacketReciever {
 
 			if (receivedData.indexOf("INVITE sip:nauman")==0) {
 			 log.info("received invite from: "+datagramPacket.getAddress().getHostAddress()+":"+datagramPacket.getPort());
-			 log.info("\n"+receivedData);
+//			 log.info("\n"+receivedData);
 			 CallHandler.handleInvite(receivedData, datagramPacket, datagramSocket);
 			}
 
