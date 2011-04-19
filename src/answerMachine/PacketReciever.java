@@ -49,7 +49,7 @@ public class PacketReciever {
 			receivedData = receivedData.trim();
 
 			// if (receivedData.indexOf("INVITE sip:nauman")==0) {
-			if (receivedData.indexOf("INVITE sip:"+Configuration.INSTANCE.getSipUser()) == 0) {
+			if (receivedData.indexOf("INVITE sip:"+Configuration.INSTANCE.getSipUser()+"@") == 0) {
 				log.info("Call accepted from " + datagramPacket.getAddress().getHostAddress() + ":" + datagramPacket.getPort());
 				CallHandler.handleInvite(receivedData, datagramPacket, datagramSocket);
 			}else if (receivedData.indexOf("INVITE sip")==0) {

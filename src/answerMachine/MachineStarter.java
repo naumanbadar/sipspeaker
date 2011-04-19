@@ -23,7 +23,8 @@ public class MachineStarter {
 			Configuration.INSTANCE.insert(args);
 			DatagramSocket datagramSocket;
 			log.info("SipSpeaker started on port " + Configuration.INSTANCE.getSipPort() + " for user " + Configuration.INSTANCE.getSipUser());
-			datagramSocket = new DatagramSocket(5061);
+			log.info("current message set to :"+Configuration.INSTANCE.getCurrentMessage());
+			datagramSocket = new DatagramSocket(Integer.parseInt(Configuration.INSTANCE.getSipPort()));
 			while (true) {
 
 				PacketReciever.receive(datagramSocket);

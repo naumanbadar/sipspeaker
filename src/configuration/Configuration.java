@@ -12,6 +12,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
+import answerMachine.CallHandler;
+
 import speech.Speech;
 
 /**
@@ -20,14 +24,22 @@ import speech.Speech;
  * 
  */
 public class Configuration {
+	private final static Logger log = Logger.getLogger(Configuration.class);
 
 	public static Configuration INSTANCE = new Configuration();
 
 	private Configuration() {
 		defaultFilePath = "sipspeaker.cfg";
+		defaultMessage = "default.wav";
+		currentMessage = "";
+		currentText = "";
+		sipUser = "";
+		sipPort = "";
+		httpPort = "";
 	}
 
 	private String defaultMessage;
+	private String defaultText;
 	private String currentMessage;
 	private String currentText;
 	private String sipUser;
@@ -53,26 +65,28 @@ public class Configuration {
 				fileOutputStream.flush();
 				fileOutputStream.close();
 
-				defaultMessage = "default.wav";
+				// defaultMessage = "default.wav";
+				// currentMessage = "";
 				sipUser = "robot";
 				sipPort = "5060";
 				httpPort = "80";
 				Speech.produce("default", "This is the dynamically generated message when no default configuration file exists.");
-			
+
 			} else if (args.length == 0 && (new File(defaultFilePath).exists())) {
 
 				FileInputStream fileInputStream = new FileInputStream(new File(defaultFilePath));
 				properties.load(fileInputStream);
+				fileInputStream.close();
 				defaultMessage = properties.getProperty("default_message");
 				currentMessage = properties.getProperty("message_wav");
 				currentText = properties.getProperty("message_text");
 				sipUser = properties.getProperty("sip_user");
 				sipPort = properties.getProperty("sip_port");
 				httpPort = properties.getProperty("http_port");
-				fileInputStream.close();
 				Speech.produce("default", "No arguments given.");
 
-			}else if (args.length!=0) {
+			} else if (args.length != 0) {
+
 				parseCommandLineArguments(args);
 				if (new File(currentFilePath).exists()) {
 					FileInputStream fileInputStream = new FileInputStream(new File(currentFilePath));
@@ -87,12 +101,16 @@ public class Configuration {
 						httpPort = properties.getProperty("http_port");
 					}
 					defaultMessage = properties.getProperty("default_message");
+					defaultText = "Default Message, message from given configuration file was loaded.";
 					currentMessage = properties.getProperty("message_wav");
 					currentText = properties.getProperty("message_text");
-					
-										
-				}else {
-					
+					if (currentMessage.isEmpty()) {
+						currentMessage = "current.wav";
+					}
+					log.info("Given configuration loaded.");
+
+				} else {
+
 					if (sipUser.isEmpty()) {
 						sipUser = "robot";
 					}
@@ -102,62 +120,86 @@ public class Configuration {
 					if (httpPort.isEmpty()) {
 						httpPort = "80";
 					}
-					defaultMessage = "default.wav";
-					
+					defaultText = "Default Message, Configuration file name was given in arguments but it does not exist.";
+					currentMessage = "";
+					currentText = "";
 				}
 
-				///TODO dump to file
-				
+				dumpToFile(properties);
 			}
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			log.info(e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			log.info(e.getMessage());
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * @param properties
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private void dumpToFile(Properties properties) throws FileNotFoundException, IOException {
+		Speech.produce("default", defaultText);
+		if (!currentText.isEmpty()) {
+			Speech.produce("current", currentText);
+		}
+		properties.setProperty("default_message", "default.wav");
+		properties.setProperty("message_wav", currentMessage);
+		properties.setProperty("message_text", currentText);
+		properties.setProperty("sip_user", sipUser);
+		properties.setProperty("sip_port", sipPort);
+		properties.setProperty("http_port", httpPort);
+
+		FileOutputStream fileOutputStream = new FileOutputStream(new File(defaultFilePath));
+		properties.store(fileOutputStream, null);
+		fileOutputStream.flush();
+		fileOutputStream.close();
+
+		fileOutputStream = new FileOutputStream(new File(currentFilePath));
+		properties.store(fileOutputStream, null);
+		fileOutputStream.flush();
+		fileOutputStream.close();
 	}
 
 	/**
 	 * @param args
 	 */
 	private void parseCommandLineArguments(String[] args) {
-		int index=0;
+		int index = 0;
 		for (int i = 0; i < args.length; i++) {
-			if (args[i].compareTo("-c")==0) {
-				currentFilePath = args[i+1];
+			if (args[i].compareTo("-c") == 0) {
+				currentFilePath = args[i + 1];
 			}
-			if (args[i].compareTo("-user")==0) {
-				index = args[i+1].indexOf("@");
-				sipUser = args[i+1].substring(0,index);
-				index = args[i+1].indexOf(":");
-				sipPort = args[i+1].substring(index+1);
+			if (args[i].compareTo("-user") == 0) {
+				index = args[i + 1].indexOf("@");
+				sipUser = args[i + 1].substring(0, index);
+				index = args[i + 1].indexOf(":");
+				sipPort = args[i + 1].substring(index + 1);
 			}
-			if (args[i].compareTo("-http")==0) {
-				index = args[i+1].indexOf(":");
-				httpPort = args[i+1].substring(index+1);
+			if (args[i].compareTo("-http") == 0) {
+				index = args[i + 1].indexOf(":");
+				httpPort = args[i + 1].substring(index + 1);
 			}
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "defaultMessage  "+defaultMessage  +"\n"+
-		       "currentMessage  "+currentMessage  +"\n"+
-               "currentText     "+currentText     +"\n"+
-               "sipUser         "+sipUser         +"\n"+
-	 	       "sipPort         "+sipPort         +"\n"+
-	 	       "httpPort        "+httpPort        +"\n"+
-	 	       "defaultFilePath "+defaultFilePath +"\n"+
-		       "currentFilePath "+currentFilePath +"\n";
+		return "defaultMessage  " + defaultMessage + "\n" + "currentMessage  " + currentMessage + "\n" + "currentText     " + currentText + "\n" + "sipUser         " + sipUser + "\n" + "sipPort         " + sipPort + "\n" + "httpPort        " + httpPort + "\n" + "defaultFilePath " + defaultFilePath + "\n" + "currentFilePath " + currentFilePath + "\n";
 	}
 
 	/**
-	 * @param iNSTANCE the iNSTANCE to set
+	 * @param iNSTANCE
+	 *            the iNSTANCE to set
 	 */
 	public static void setINSTANCE(Configuration iNSTANCE) {
 		INSTANCE = iNSTANCE;
@@ -171,7 +213,8 @@ public class Configuration {
 	}
 
 	/**
-	 * @param defaultMessage the defaultMessage to set
+	 * @param defaultMessage
+	 *            the defaultMessage to set
 	 */
 	public void setDefaultMessage(String defaultMessage) {
 		this.defaultMessage = defaultMessage;
@@ -185,13 +228,13 @@ public class Configuration {
 	}
 
 	/**
-	 * @param currentMessage the currentMessage to set
+	 * @param currentMessage
+	 *            the currentMessage to set
 	 */
 	public void setCurrentMessage(String currentMessage) {
 		this.currentMessage = currentMessage;
 	}
 
-	
 	/**
 	 * @return the currentText
 	 */
@@ -200,7 +243,8 @@ public class Configuration {
 	}
 
 	/**
-	 * @param currentText the currentText to set
+	 * @param currentText
+	 *            the currentText to set
 	 */
 	public void setCurrentText(String currentText) {
 		this.currentText = currentText;
@@ -214,7 +258,8 @@ public class Configuration {
 	}
 
 	/**
-	 * @param sipUser the sipUser to set
+	 * @param sipUser
+	 *            the sipUser to set
 	 */
 	public void setSipUser(String sipUser) {
 		this.sipUser = sipUser;
@@ -228,7 +273,8 @@ public class Configuration {
 	}
 
 	/**
-	 * @param sipPort the sipPort to set
+	 * @param sipPort
+	 *            the sipPort to set
 	 */
 	public void setSipPort(String sipPort) {
 		this.sipPort = sipPort;
@@ -242,7 +288,8 @@ public class Configuration {
 	}
 
 	/**
-	 * @param httpPort the httpPort to set
+	 * @param httpPort
+	 *            the httpPort to set
 	 */
 	public void setHttpPort(String httpPort) {
 		this.httpPort = httpPort;
@@ -256,7 +303,8 @@ public class Configuration {
 	}
 
 	/**
-	 * @param defaultFilePath the defaultFilePath to set
+	 * @param defaultFilePath
+	 *            the defaultFilePath to set
 	 */
 	public void setDefaultFilePath(String defaultFilePath) {
 		this.defaultFilePath = defaultFilePath;
@@ -270,17 +318,19 @@ public class Configuration {
 	}
 
 	/**
-	 * @param currentFilePath the currentFilePath to set
+	 * @param currentFilePath
+	 *            the currentFilePath to set
 	 */
 	public void setCurrentFilePath(String currentFilePath) {
 		this.currentFilePath = currentFilePath;
 	}
-public String getPlayMessage(){
-	if (currentMessage.isEmpty()) {
-		return defaultMessage;
-	}else
-		return currentMessage;
-		
-}
+
+	public String getPlayMessage() {
+		if (currentMessage.isEmpty()) {
+			return defaultMessage;
+		} else
+			return currentMessage;
+
+	}
 
 }
