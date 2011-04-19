@@ -1,13 +1,6 @@
-.classpath
-admin.log
-.project
-.settings/
 bin/
-receivedDataFile
-Assignment2.logs
-falana
 *.wav
 *.cfg
 *.logs
 *.zip
-exportToJunk.xml
+*.xml

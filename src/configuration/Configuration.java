@@ -3,8 +3,6 @@
  */
 package configuration;
 
-import helpers.RegexExtractor;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,8 +11,6 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-
-import answerMachine.CallHandler;
 
 import speech.Speech;
 
@@ -34,6 +30,7 @@ public class Configuration {
 	public static Configuration INSTANCE = new Configuration();
 
 	private Configuration() {
+		currentFilePath = "";
 		defaultFilePath = "sipspeaker.cfg";
 		defaultMessage = "default.wav";
 		workingFilePath = "wsipspeaker.cfg";
@@ -117,7 +114,7 @@ public class Configuration {
 					defaultMessage = properties.getProperty("default_message");
 					defaultText = "Default Message, message from given configuration file was loaded.";
 					currentMessage = properties.getProperty("message_wav");
-					log.info("current mesg: "+currentMessage);
+					log.info("current mesg: " + currentMessage);
 					currentText = properties.getProperty("message_text");
 					if (currentMessage.isEmpty()) {
 						currentMessage = "current.wav";
@@ -158,8 +155,10 @@ public class Configuration {
 	 * @throws IOException
 	 */
 	private void dumpToFile(Properties properties) throws FileNotFoundException, IOException {
-		
-		Speech.produce(defaultMessage.replace(".wav", ""), defaultText);
+
+		if (!(new File(defaultMessage).exists())) {
+			Speech.produce(defaultMessage.replace(".wav", ""), defaultText);
+		}
 		if (!currentText.isEmpty()) {
 			Speech.produce(currentMessage.replace(".wav", ""), currentText);
 		}
@@ -174,11 +173,13 @@ public class Configuration {
 		properties.store(fileOutputStream, null);
 		fileOutputStream.flush();
 		fileOutputStream.close();
-		//
-		// fileOutputStream = new FileOutputStream(new File(currentFilePath));
-		// properties.store(fileOutputStream, null);
-		// fileOutputStream.flush();
-		// fileOutputStream.close();
+
+		if (!currentFilePath.isEmpty()) {
+			fileOutputStream = new FileOutputStream(new File(currentFilePath));
+			properties.store(fileOutputStream, null);
+			fileOutputStream.flush();
+			fileOutputStream.close();
+		}
 	}
 
 	/**
