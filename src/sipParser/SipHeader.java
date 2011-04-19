@@ -203,6 +203,15 @@ public class SipHeader {
 		sipHeaders.append("\r\n");
 		return sipHeaders.toString();
 	}
+	
+	public String produceSipNotFound() {
+		StringBuilder sipHeaders = new StringBuilder();
+		sipHeaders.append("SIP/2.0 404 Not Found" + "\r\n");
+		appendCommonHeaders(sipHeaders);
+		sipHeaders.append("Content-Length: 0" + "\r\n");
+		sipHeaders.append("\r\n");
+		return sipHeaders.toString();
+	}
 
 	public String produceSipRinging() {
 
