@@ -24,6 +24,11 @@ import speech.Speech;
  * 
  */
 public class Configuration {
+
+	private static final String HARDCODED_HTTP_PORT = "80";
+	private static final String HARDCODED_SIP_USER = "robot";
+	private static final String HARDCODED_SIP_PORT = "5061";
+
 	private final static Logger log = Logger.getLogger(Configuration.class);
 
 	public static Configuration INSTANCE = new Configuration();
@@ -31,6 +36,7 @@ public class Configuration {
 	private Configuration() {
 		defaultFilePath = "sipspeaker.cfg";
 		defaultMessage = "default.wav";
+		workingFilePath = "wsipspeaker.cfg";
 		currentMessage = "";
 		currentText = "";
 		sipUser = "";
@@ -47,29 +53,32 @@ public class Configuration {
 	private String httpPort;
 	private String defaultFilePath;
 	private String currentFilePath;
+	private String workingFilePath;
 
 	public void insert(String args[]) {
 		try {
 			Properties properties = new Properties();
 
 			if (args.length == 0 && !(new File(defaultFilePath).exists())) {
-				FileOutputStream fileOutputStream = new FileOutputStream(new File(defaultFilePath));
+				// FileOutputStream fileOutputStream = new FileOutputStream(new
+				// File(defaultFilePath));
+				FileOutputStream fileOutputStream = new FileOutputStream(new File(workingFilePath));
 				properties.setProperty("default_message", "default.wav");
 				properties.setProperty("message_wav", "");
 				properties.setProperty("message_text", "");
-				properties.setProperty("sip_user", "robot");
-				properties.setProperty("sip_port", "5060");
-				properties.setProperty("http_port", "80");
+				properties.setProperty("sip_user", HARDCODED_SIP_USER);
+				properties.setProperty("sip_port", HARDCODED_SIP_PORT);
+				properties.setProperty("http_port", HARDCODED_HTTP_PORT);
 
-				properties.store(fileOutputStream, "When the default sipspeaker didnot exist.");
+				properties.store(fileOutputStream, null);
 				fileOutputStream.flush();
 				fileOutputStream.close();
 
 				// defaultMessage = "default.wav";
 				// currentMessage = "";
-				sipUser = "robot";
-				sipPort = "5060";
-				httpPort = "80";
+				sipUser = HARDCODED_SIP_USER;
+				sipPort = HARDCODED_SIP_PORT;
+				httpPort = HARDCODED_HTTP_PORT;
 				Speech.produce("default", "This is the dynamically generated message when no default configuration file exists.");
 
 			} else if (args.length == 0 && (new File(defaultFilePath).exists())) {
@@ -83,7 +92,12 @@ public class Configuration {
 				sipUser = properties.getProperty("sip_user");
 				sipPort = properties.getProperty("sip_port");
 				httpPort = properties.getProperty("http_port");
-				Speech.produce("default", "No arguments given.");
+				defaultText = "No arguments given.";
+				if (currentMessage.isEmpty()) {
+					currentMessage = "current.wav";
+				}
+				// Speech.produce("default", "No arguments given.");
+				dumpToFile(properties);
 
 			} else if (args.length != 0) {
 
@@ -103,6 +117,7 @@ public class Configuration {
 					defaultMessage = properties.getProperty("default_message");
 					defaultText = "Default Message, message from given configuration file was loaded.";
 					currentMessage = properties.getProperty("message_wav");
+					log.info("current mesg: "+currentMessage);
 					currentText = properties.getProperty("message_text");
 					if (currentMessage.isEmpty()) {
 						currentMessage = "current.wav";
@@ -112,13 +127,13 @@ public class Configuration {
 				} else {
 
 					if (sipUser.isEmpty()) {
-						sipUser = "robot";
+						sipUser = HARDCODED_SIP_USER;
 					}
 					if (sipPort.isEmpty()) {
-						sipPort = "5060";
+						sipPort = HARDCODED_SIP_PORT;
 					}
 					if (httpPort.isEmpty()) {
-						httpPort = "80";
+						httpPort = HARDCODED_HTTP_PORT;
 					}
 					defaultText = "Default Message, Configuration file name was given in arguments but it does not exist.";
 					currentMessage = "";
@@ -143,26 +158,27 @@ public class Configuration {
 	 * @throws IOException
 	 */
 	private void dumpToFile(Properties properties) throws FileNotFoundException, IOException {
-		Speech.produce("default", defaultText);
+		
+		Speech.produce(defaultMessage.replace(".wav", ""), defaultText);
 		if (!currentText.isEmpty()) {
-			Speech.produce("current", currentText);
+			Speech.produce(currentMessage.replace(".wav", ""), currentText);
 		}
-		properties.setProperty("default_message", "default.wav");
+		properties.setProperty("default_message", defaultMessage);
 		properties.setProperty("message_wav", currentMessage);
 		properties.setProperty("message_text", currentText);
 		properties.setProperty("sip_user", sipUser);
 		properties.setProperty("sip_port", sipPort);
 		properties.setProperty("http_port", httpPort);
 
-		FileOutputStream fileOutputStream = new FileOutputStream(new File(defaultFilePath));
+		FileOutputStream fileOutputStream = new FileOutputStream(new File(workingFilePath));
 		properties.store(fileOutputStream, null);
 		fileOutputStream.flush();
 		fileOutputStream.close();
-
-		fileOutputStream = new FileOutputStream(new File(currentFilePath));
-		properties.store(fileOutputStream, null);
-		fileOutputStream.flush();
-		fileOutputStream.close();
+		//
+		// fileOutputStream = new FileOutputStream(new File(currentFilePath));
+		// properties.store(fileOutputStream, null);
+		// fileOutputStream.flush();
+		// fileOutputStream.close();
 	}
 
 	/**
