@@ -6,3 +6,7 @@ bin/
 receivedDataFile
 Assignment2.logs
 falana
+*.wav
+*.cfg
+*.logs
+*.zip

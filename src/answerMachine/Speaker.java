@@ -158,7 +158,7 @@ public class Speaker implements Runnable {
 			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
 			datagramPacket.setData(byteBuffer);
 			datagramSocket.send(datagramPacket);
-			log.info("BYE SENT");
+			log.info("BYE sent to "+datagramPacket.getAddress().getHostAddress()+":"+datagramPacket.getPort());
 
 		} catch (NoDataSourceException e) {
 			// TODO Auto-generated catch block

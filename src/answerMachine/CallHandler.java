@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import configuration.Configuration;
+
 import sipParser.SipHeader;
 
 /**
@@ -30,7 +32,8 @@ public class CallHandler implements Runnable {
 
 
 //			log.info("*********************************************Received Data\n" + receivedData.trim());
-			SipHeader sipHeader = new SipHeader("5061", "IBN BAD'R", "IK2213_SIP_SPEAKER", receivedData);
+//			SipHeader sipHeader = new SipHeader("5061", "IBN BAD'R", "IK2213_SIP_SPEAKER", receivedData);
+			SipHeader sipHeader = new SipHeader(Configuration.INSTANCE.getSipPort(), Configuration.INSTANCE.getSipUser(), "IK2213_SIP_SPEAKER", receivedData);
 
 //			log.info("*********************************************Sent OK\n" + sipHeader.produceSipOK());
 
@@ -54,7 +57,8 @@ public class CallHandler implements Runnable {
 
 			
 //			Thread speakerThread = new Thread(new Speaker(sipHeader.getContact().getIpAddress(), sipHeader.getSipPort(), "/home/naumanbadar/Downloads/chaotic.wav"));
-			Thread speakerThread = new Thread(new Speaker(sipHeader, datagramSocket, "/home/naumanbadar/Downloads/chaotic.wav"));
+//			Thread speakerThread = new Thread(new Speaker(sipHeader, datagramSocket, "/home/naumanbadar/Downloads/chaotic.wav"));
+			Thread speakerThread = new Thread(new Speaker(sipHeader, datagramSocket, Configuration.INSTANCE.getPlayMessage()));
 			speakerThread.start();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
