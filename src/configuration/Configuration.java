@@ -21,7 +21,7 @@ import speech.Speech;
  */
 public class Configuration {
 
-	private static final String HARDCODED_HTTP_PORT = "80";
+	private static final String HARDCODED_HTTP_PORT = "8080";
 	private static final String HARDCODED_SIP_USER = "robot";
 	private static final String HARDCODED_SIP_PORT = "5061";
 
@@ -59,7 +59,8 @@ public class Configuration {
 			if (args.length == 0 && !(new File(defaultFilePath).exists())) {
 				// FileOutputStream fileOutputStream = new FileOutputStream(new
 				// File(defaultFilePath));
-				FileOutputStream fileOutputStream = new FileOutputStream(new File(workingFilePath));
+//				FileOutputStream fileOutputStream = new FileOutputStream(new File(workingFilePath));
+				FileOutputStream fileOutputStream = new FileOutputStream(new File(defaultFilePath));
 				properties.setProperty("default_message", "default.wav");
 				properties.setProperty("message_wav", "");
 				properties.setProperty("message_text", "");
@@ -76,6 +77,7 @@ public class Configuration {
 				sipUser = HARDCODED_SIP_USER;
 				sipPort = HARDCODED_SIP_PORT;
 				httpPort = HARDCODED_HTTP_PORT;
+				defaultText = "This is the dynamically generated message when no default configuration file exists.";
 				Speech.produce("default", "This is the dynamically generated message when no default configuration file exists.");
 
 			} else if (args.length == 0 && (new File(defaultFilePath).exists())) {
@@ -134,7 +136,7 @@ public class Configuration {
 					}
 					defaultText = "Default Message, Configuration file name was given in arguments but it does not exist.";
 					currentMessage = "";
-					currentText = "";
+					currentText = "Current Message generated because the given configuration file didn't exist.";
 				}
 
 				dumpToFile(properties);
@@ -169,7 +171,8 @@ public class Configuration {
 		properties.setProperty("sip_port", sipPort);
 		properties.setProperty("http_port", httpPort);
 
-		FileOutputStream fileOutputStream = new FileOutputStream(new File(workingFilePath));
+//		FileOutputStream fileOutputStream = new FileOutputStream(new File(workingFilePath));
+		FileOutputStream fileOutputStream = new FileOutputStream(new File(defaultFilePath));
 		properties.store(fileOutputStream, null);
 		fileOutputStream.flush();
 		fileOutputStream.close();
@@ -256,6 +259,10 @@ public class Configuration {
 	 * @return the currentText
 	 */
 	public String getCurrentText() {
+		if (currentMessage.isEmpty()) {
+			return "Fall back to default message!!";
+		}
+		
 		return currentText;
 	}
 
@@ -356,7 +363,7 @@ public class Configuration {
 		} else {
 			currentText = text;
 			if (currentMessage.isEmpty()) {
-				Speech.produce("current.wav", currentText);
+				Speech.produce("current", currentText);
 				currentMessage = "current.wav";
 			} else {
 				Speech.produce(currentMessage.replace(".wav", ""), currentText);
@@ -365,7 +372,7 @@ public class Configuration {
 			try {
 				properties.setProperty("message_text", currentText);
 				FileOutputStream fileOutputStream;
-				fileOutputStream = new FileOutputStream(new File(workingFilePath));
+				fileOutputStream = new FileOutputStream(new File(defaultFilePath));
 				properties.store(fileOutputStream, null);
 				fileOutputStream.flush();
 				fileOutputStream.close();

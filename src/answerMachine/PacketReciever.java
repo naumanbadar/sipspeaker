@@ -57,7 +57,7 @@ public class PacketReciever {
 				CallHandler.handleWrongInvite(receivedData, datagramPacket, datagramSocket);
 
 			} else if (receivedData.indexOf("BYE sip") == 0) {
-				log.info("Bye received from " + datagramPacket.getAddress().getHostAddress() + ":" + datagramPacket.getPort());
+//				log.info("Bye received from " + datagramPacket.getAddress().getHostAddress() + ":" + datagramPacket.getPort());
 				CallHandler.handleBye(receivedData, datagramPacket, datagramSocket);
 
 			}

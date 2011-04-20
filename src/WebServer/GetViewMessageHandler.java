@@ -32,7 +32,7 @@ public class GetViewMessageHandler {
 		StringBuilder htmlData;
 		htmlData = new StringBuilder();
 		htmlData.append("<HTML>");
-		htmlData.append("<HEAD><Title>Webmail</Title><META HTTP-EQUIV=\"REFRESH\" CONTENT=\"5\"><META http-equiv=Content-Type content=\"text/html; charset=utf-8\"></HEAD>");
+		htmlData.append("<HEAD><Title>Webmail</Title><META http-equiv=Content-Type content=\"text/html; charset=utf-8\"></HEAD>");
 		htmlData.append("<BODY bgcolor=\"#ff9900\">");
 		htmlData.append("<H1>");
 		htmlData.append(Configuration.INSTANCE.getCurrentText());

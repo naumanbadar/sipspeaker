@@ -119,6 +119,8 @@ public class CallHandler {
 			if (!runningCalls.containsKey(key)) {
 				return;
 			}
+			log.info("Client hang up from " + datagramPacket.getAddress().getHostAddress() + ":" + datagramPacket.getPort());
+			
 			Thread runningcall = runningCalls.get(key);
 			runningcall.stop();
 //			log.info("registered in running calls register");
