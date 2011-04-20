@@ -50,7 +50,6 @@ public class PacketReciever {
 
 			// if (receivedData.indexOf("INVITE sip:nauman")==0) {
 			if (receivedData.indexOf("INVITE sip:" + Configuration.INSTANCE.getSipUser() + "@") == 0) {
-				log.info("Call accepted from " + datagramPacket.getAddress().getHostAddress() + ":" + datagramPacket.getPort());
 				CallHandler.handleInvite(receivedData, datagramPacket, datagramSocket);
 			} else if (receivedData.indexOf("INVITE sip") == 0) {
 				log.info("Call rejected for unknown calee from " + datagramPacket.getAddress().getHostAddress() + ":" + datagramPacket.getPort());

@@ -9,6 +9,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.util.Hashtable;
 
 import javax.media.CannotRealizeException;
 import javax.media.DataSink;
@@ -27,6 +28,7 @@ import javax.media.protocol.DataSource;
 
 import org.apache.log4j.Logger;
 
+import sipParser.Contact;
 import sipParser.SipHeader;
 
 /**
@@ -41,19 +43,22 @@ public class Speaker implements Runnable {
 	private String pathToAudio;
 	private SipHeader sipHeader;
 	private DatagramSocket datagramSocket;
+	private Hashtable<Contact, Thread> runningCallsInThread;
 
 	/**
 	 * @param sipHeader
 	 * @param datagramSocket
 	 * @param pathToAudio
+	 * @param runningCalls 
 	 */
-	public Speaker(SipHeader sipHeader, DatagramSocket datagramSocket, String pathToAudio) {
+	public Speaker(SipHeader sipHeader, DatagramSocket datagramSocket, String pathToAudio, Hashtable<Contact, Thread> runningCalls) {
 		super();
 		this.sipHeader = sipHeader;
 		this.datagramSocket = datagramSocket;
 		this.pathToAudio = pathToAudio;
 		this.ipAddress = sipHeader.getContact().getIpAddress();
 		this.port = sipHeader.getSipPort();
+		this.runningCallsInThread = runningCalls;
 	}
 
 	/**
@@ -158,6 +163,8 @@ public class Speaker implements Runnable {
 			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
 			datagramPacket.setData(byteBuffer);
 			datagramSocket.send(datagramPacket);
+			Contact key = new Contact(datagramPacket.getAddress().getHostAddress(), Integer.toString(datagramPacket.getPort()));
+			runningCallsInThread.remove(key);
 			log.info("BYE sent to "+datagramPacket.getAddress().getHostAddress()+":"+datagramPacket.getPort());
 
 		} catch (NoDataSourceException e) {

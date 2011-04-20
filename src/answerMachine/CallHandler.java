@@ -32,6 +32,11 @@ public class CallHandler {
 	public static void handleInvite(String receivedData, DatagramPacket datagramPacket, DatagramSocket datagramSocket) {
 		try {
 
+			Contact key1 = new Contact(datagramPacket.getAddress().getHostAddress(), Integer.toString(datagramPacket.getPort()));
+			if (runningCalls.containsKey(key1)) {
+				return;
+			}
+			log.info("Call accepted from " + datagramPacket.getAddress().getHostAddress() + ":" + datagramPacket.getPort());
 			// log.info("*********************************************Received Data\n"
 			// + receivedData.trim());
 			// SipHeader sipHeader = new SipHeader("5061", "IBN BAD'R",
@@ -65,9 +70,11 @@ public class CallHandler {
 			// "/home/naumanbadar/Downloads/chaotic.wav"));
 			// Thread speakerThread = new Thread(new Speaker(sipHeader,
 			// datagramSocket, "/home/naumanbadar/Downloads/chaotic.wav"));
-			Thread speakerThread = new Thread(new Speaker(sipHeader, datagramSocket, Configuration.INSTANCE.getPlayMessage()));
-			runningCalls.put(new Contact(datagramPacket.getAddress().getHostAddress(), Integer.toString(datagramPacket.getPort())), speakerThread);
+			Thread speakerThread = new Thread(new Speaker(sipHeader, datagramSocket, Configuration.INSTANCE.getPlayMessage(),runningCalls));
+			Contact key2 = new Contact(datagramPacket.getAddress().getHostAddress(), Integer.toString(datagramPacket.getPort()));
+			runningCalls.put(key2, speakerThread);
 			speakerThread.start();
+//			log.info(key1+"*************"+key2);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -119,10 +126,11 @@ public class CallHandler {
 			if (!runningCalls.containsKey(key)) {
 				return;
 			}
-			log.info("Client hang up from " + datagramPacket.getAddress().getHostAddress() + ":" + datagramPacket.getPort());
 			
 			Thread runningcall = runningCalls.get(key);
-			runningcall.stop();
+			if (runningcall.isAlive()) {
+				runningcall.stop();
+			}
 //			log.info("registered in running calls register");
 
 //			log.info("Bye received");
@@ -130,10 +138,14 @@ public class CallHandler {
 //			log.info(receivedData);
 
 			byte[] byteBuffer = sipHeader.produceByeOK().getBytes();
-			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
-			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
+//			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
+//			datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
+			datagramPacket.setAddress(datagramPacket.getAddress());
+			datagramPacket.setPort(datagramPacket.getPort());
 			datagramPacket.setData(byteBuffer);
 			datagramSocket.send(datagramPacket);
+			runningCalls.remove(key);
+			log.info("Client hang up from " + datagramPacket.getAddress().getHostAddress() + ":" + datagramPacket.getPort());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
