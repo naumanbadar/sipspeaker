@@ -14,16 +14,13 @@ body {
 <BODY>
 <FORM name=updateMessage method=post action=/update> 
 Message<BR>
-<TEXTAREA name=textareaMessage rows=20 cols=80>
-Can you encode Swedish characters?
-</TEXTAREA><BR>
-
+<input type="text" size="60" maxlength="110" value="Hi there" name=textfieldMessage/>
+<BR>
 <INPUT type=submit value=Update name=btnUpdate> 
+
+<INPUT type=reset value=Delete name=btnDelete>
 </FORM>
-<FORM name=deleteMessage method=post action=/delete> 
-<INPUT type=submit value=Delete name=btnDelete> 
-</FORM>
-<FORM name=viewMessage method=post action=/view> 
+<FORM name=viewMessage method=get action=/viewMessage> 
 <INPUT type=submit value=View name=btnView> 
 </FORM>
 </BODY>

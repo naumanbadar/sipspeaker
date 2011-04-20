@@ -71,10 +71,9 @@ public class Listener {
 			else if (Pattern.matches("^POST /update.*", requestHeader)) {
 				PostUpdateHandler.handle(inputBufferReader, outputPrintWriter, completeHeader);
 				// log.info(completeHeader);
-			} else if (Pattern.matches("^GET /status.*", requestHeader)) {
-				// GetStatusHandler.handle(inputBufferReader, outputPrintWriter,
-				// completeHeader);
-				// log.info("GET STATUS");
+			} else if (Pattern.matches("^GET /viewMessage.*", requestHeader)) {
+				 GetViewMessageHandler.handle(inputBufferReader, outputPrintWriter,completeHeader);
+				 log.info("view STATUS");
 			}
 
 			// ipbuff.read(charb);
