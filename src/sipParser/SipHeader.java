@@ -292,6 +292,36 @@ public class SipHeader {
 
 		return sipHeaders.toString();
 	}
+	
+	public String produceCancelOK() {
+		
+		StringBuilder sipHeaders = new StringBuilder();
+		sipHeaders.append("SIP/2.0 200 OK" + "\r\n");
+		sipHeaders.append(via + "\r\n");
+		sipHeaders.append("Content-Length: 0" + "\r\n");
+		sipHeaders.append(callID + "\r\n");
+		sipHeaders.append("CSeq: 1 CANCEL" + "\r\n");
+		sipHeaders.append(from + "\r\n");
+		sipHeaders.append(appendedTo + "\r\n");
+		sipHeaders.append("\r\n");
+		
+		return sipHeaders.toString();
+	}
+
+	public String requestTerminated() {
+		
+		StringBuilder sipHeaders = new StringBuilder();
+		sipHeaders.append("SIP/2.0 487 Request Terminated" + "\r\n");
+		sipHeaders.append(via + "\r\n");
+		sipHeaders.append("Content-Length: 0" + "\r\n");
+		sipHeaders.append(callID + "\r\n");
+		sipHeaders.append("CSeq: 1 INVITE" + "\r\n");
+		sipHeaders.append(from + "\r\n");
+		sipHeaders.append(appendedTo + "\r\n");
+		sipHeaders.append("\r\n");
+		
+		return sipHeaders.toString();
+	}
 
 	/**
 	 * @return the localPort

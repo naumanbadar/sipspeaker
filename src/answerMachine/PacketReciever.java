@@ -55,12 +55,15 @@ public class PacketReciever {
 				log.info("Call rejected for unknown calee from " + datagramPacket.getAddress().getHostAddress() + ":" + datagramPacket.getPort());
 				CallHandler.handleWrongInvite(receivedData, datagramPacket, datagramSocket);
 
-			} else if (receivedData.indexOf("BYE sip") == 0) {
-//				log.info("Bye received from " + datagramPacket.getAddress().getHostAddress() + ":" + datagramPacket.getPort());
+			} 
+			
+			else if (receivedData.indexOf("BYE sip") == 0) {
 				CallHandler.handleBye(receivedData, datagramPacket, datagramSocket);
-
 			}
-
+			
+//			else if (receivedData.indexOf("CANCEL sip") == 0) {
+//				CallHandler.handleCancel(receivedData, datagramPacket, datagramSocket);
+//			}
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
