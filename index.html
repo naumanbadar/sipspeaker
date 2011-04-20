@@ -1,0 +1,31 @@
+<HTML>
+<HEAD>
+<TITLE>IK2213 SIP Speaker</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=utf-8">
+</HEAD>
+<style type="text/css">
+body {
+	font-family:verdana,arial,sans-serif;
+	font-size:10pt;
+	margin:10px;
+	background-color:#ff9900;
+	}
+</style>
+<BODY>
+<FORM name=updateMessage method=post action=/update> 
+Message<BR>
+<TEXTAREA name=textareaMessage rows=20 cols=80>
+Can you encode Swedish characters?
+</TEXTAREA><BR>
+
+<INPUT type=submit value=Update name=btnUpdate> 
+</FORM>
+<FORM name=deleteMessage method=post action=/delete> 
+<INPUT type=submit value=Delete name=btnDelete> 
+</FORM>
+<FORM name=viewMessage method=post action=/view> 
+<INPUT type=submit value=View name=btnView> 
+</FORM>
+</BODY>
+</HTML>
+

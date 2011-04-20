@@ -51,10 +51,10 @@ public class Configuration {
 	private String defaultFilePath;
 	private String currentFilePath;
 	private String workingFilePath;
+	private Properties properties = new Properties();
 
 	public void insert(String args[]) {
 		try {
-			Properties properties = new Properties();
 
 			if (args.length == 0 && !(new File(defaultFilePath).exists())) {
 				// FileOutputStream fileOutputStream = new FileOutputStream(new
@@ -350,4 +350,40 @@ public class Configuration {
 
 	}
 
+	public void updateFromWebserver(String text) {
+		if (text.isEmpty()) {
+			currentMessage = "";
+		} else {
+			currentText = text;
+			if (currentMessage.isEmpty()) {
+				Speech.produce("current.wav", currentText);
+				currentMessage = "current.wav";
+			} else {
+				Speech.produce(currentMessage.replace(".wav", ""), currentText);
+			}
+
+			try {
+				properties.setProperty("message_text", currentText);
+				FileOutputStream fileOutputStream;
+				fileOutputStream = new FileOutputStream(new File(workingFilePath));
+				properties.store(fileOutputStream, null);
+				fileOutputStream.flush();
+				fileOutputStream.close();
+
+				if (!currentFilePath.isEmpty()) {
+					fileOutputStream = new FileOutputStream(new File(currentFilePath));
+					properties.store(fileOutputStream, null);
+					fileOutputStream.flush();
+					fileOutputStream.close();
+				}
+
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 }

@@ -8,6 +8,8 @@ import java.net.SocketException;
 
 import org.apache.log4j.Logger;
 
+import WebServer.WebServerStarter;
+
 import configuration.Configuration;
 
 /**
@@ -22,9 +24,14 @@ public class MachineStarter {
 
 			Configuration.INSTANCE.insert(args);
 			DatagramSocket datagramSocket;
-			log.info("SipSpeaker started on port " + Configuration.INSTANCE.getSipPort() + " for user " + Configuration.INSTANCE.getSipUser());
-//			log.info("current message set to :"+Configuration.INSTANCE.getCurrentMessage());
+			// log.info("current message set to :"+Configuration.INSTANCE.getCurrentMessage());
+
+			Thread webServerThread = new Thread(new WebServerStarter(Configuration.INSTANCE.getHttpPort()));
+			webServerThread.start();
+			log.info("Web Server started on port " + Configuration.INSTANCE.getHttpPort());
+
 			datagramSocket = new DatagramSocket(Integer.parseInt(Configuration.INSTANCE.getSipPort()));
+			log.info("SipSpeaker started on port " + Configuration.INSTANCE.getSipPort() + " for user " + Configuration.INSTANCE.getSipUser());
 			while (true) {
 
 				PacketReciever.receive(datagramSocket);
