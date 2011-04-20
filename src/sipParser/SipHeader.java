@@ -139,6 +139,9 @@ public class SipHeader {
 		contentLenght = RegexExtractor.extract(receivedData, "Content-Length: ", "\r\n", false);
 		contact.ipAddress = RegexExtractor.extract(receivedData, "Contact: <sip:", ":", false);
 		contact.port = RegexExtractor.extract(receivedData, "Contact: <sip:\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:", ">", false);
+		if (contact.port.isEmpty()) {
+			contact.port="5060";
+		}
 		callID = RegexExtractor.extract(receivedData, "Call-ID:", "\r\n", true);
 		contentType = RegexExtractor.extract(receivedData, "Content-Type:", "\r\n", true);
 		cSeq = RegexExtractor.extract(receivedData, "CSeq:", "\r\n", true);
@@ -152,7 +155,9 @@ public class SipHeader {
 		// "received=" + contact.ipAddress);
 		appendedVia = viaBuilder.toString();
 
+		if (Integer.parseInt(contentLenght.trim())!=0) {
 		changePortInSdp();
+		}
 
 		appendedTo = to.concat(";tag=" + tag);
 		StringBuilder appendedToBuilder = new StringBuilder(appendedTo);
@@ -271,6 +276,21 @@ public class SipHeader {
 		sipHeaders.append(appendedTo + "\r\n");
 		sipHeaders.append("Server: " + localServer + "\r\n");
 
+	}
+	
+	public String produceByeOK() {
+
+		StringBuilder sipHeaders = new StringBuilder();
+		sipHeaders.append("SIP/2.0 200 OK" + "\r\n");
+		sipHeaders.append(via + "\r\n");
+		sipHeaders.append("Content-Length: 0" + "\r\n");
+		sipHeaders.append(callID + "\r\n");
+		sipHeaders.append("CSeq: 2 BYE" + "\r\n");
+		sipHeaders.append(from + "\r\n");
+		sipHeaders.append(appendedTo + "\r\n");
+		sipHeaders.append("\r\n");
+
+		return sipHeaders.toString();
 	}
 
 	/**
