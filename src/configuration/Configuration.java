@@ -135,8 +135,8 @@ public class Configuration {
 						httpPort = HARDCODED_HTTP_PORT;
 					}
 					defaultText = "Default Message, Configuration file name was given in arguments but it does not exist.";
-					currentMessage = "";
-					currentText = "Current Message generated because the given configuration file didn't exist.";
+					currentMessage = "wrongcfg.wav";
+					currentText = "Current Message generated because of wrong configuration file name.";
 				}
 
 				dumpToFile(properties);
