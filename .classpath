@@ -10,7 +10,6 @@
 	<classpathentry kind="lib" path="/home/naumanbadar/Downloads/freetts-1.2/lib/cmu_time_awb.jar"/>
 	<classpathentry kind="lib" path="/home/naumanbadar/Downloads/freetts-1.2/lib/cmutimelex.jar"/>
 	<classpathentry kind="lib" path="/home/naumanbadar/Downloads/freetts-1.2/lib/cmu_us_kal.jar"/>
-	<classpathentry kind="lib" path="/home/naumanbadar/Downloads/freetts-1.2/lib/mbrola.jar"/>
 	<classpathentry kind="lib" path="/home/naumanbadar/Downloads/freetts-1.2/lib/cmudict04.jar"/>
 	<classpathentry kind="lib" path="/home/naumanbadar/Downloads/freetts-1.2/lib/freetts-jsapi10.jar"/>
 	<classpathentry kind="output" path="bin"/>

@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.regex.Pattern;
 
@@ -15,28 +14,28 @@ import org.apache.log4j.Logger;
  * @created Mar 31, 2011
  * 
  */
-public class Listener {
+public class Listener implements Runnable{
 
 	private final static Logger log = Logger.getLogger(Listener.class.getName());
 
-	private ServerSocket serverSocket;
-	private int httpPort;
+	private Socket clientSocket;
+//	private int httpPort;
 
 	/**
 	 * 
 	 */
-	public Listener(int port) {
-		httpPort = port;
+	public Listener(Socket clientSocket) {
+		this.clientSocket=clientSocket;
 	}
 
-	public String start() {
+	public String httpHandler() {
 		try {
 
 			// char charb[]= new char[2000];
-			serverSocket = new ServerSocket(httpPort);
+//			serverSocket = new ServerSocket(httpPort);
 			// serverSocket = new ServerSocket(8888);
 
-			Socket clientSocket = serverSocket.accept();
+//			Socket clientSocket = serverSocket.accept();
 			BufferedReader inputBufferReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			PrintWriter outputPrintWriter = new PrintWriter(clientSocket.getOutputStream());
 			// while
@@ -79,7 +78,7 @@ public class Listener {
 			// ipbuff.read(charb);
 			outputPrintWriter.close();
 			inputBufferReader.close();
-			serverSocket.close();
+			clientSocket.close();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -87,6 +86,15 @@ public class Listener {
 		}
 
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
+	@Override
+	public void run() {
+		httpHandler();
+		
 	}
 
 }

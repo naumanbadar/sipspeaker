@@ -33,9 +33,12 @@ public class PostUpdateHandler {
 //			log.info("POST BODY "+postBody);
 			
 			String fields[] = postBody.split("\\&?\\w*=");
-			
+			for (String string : fields) {
+				log.info(string);
+			}
 //
 			String newMessage = URLDecoder.decode(fields[1],"UTF-8");
+			
 			Configuration.INSTANCE.updateFromWebserver(newMessage.trim());
 			log.info(newMessage);
 //			String toAddress = URLDecoder.decode(fields[2],"UTF-8");
