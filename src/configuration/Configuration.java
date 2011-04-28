@@ -57,9 +57,6 @@ public class Configuration {
 		try {
 
 			if (args.length == 0 && !(new File(defaultFilePath).exists())) {
-				// FileOutputStream fileOutputStream = new FileOutputStream(new
-				// File(defaultFilePath));
-//				FileOutputStream fileOutputStream = new FileOutputStream(new File(workingFilePath));
 				FileOutputStream fileOutputStream = new FileOutputStream(new File(defaultFilePath));
 				properties.setProperty("default_message", "default.wav");
 				properties.setProperty("message_wav", "");
@@ -72,8 +69,6 @@ public class Configuration {
 				fileOutputStream.flush();
 				fileOutputStream.close();
 
-				// defaultMessage = "default.wav";
-				// currentMessage = "";
 				sipUser = HARDCODED_SIP_USER;
 				sipPort = HARDCODED_SIP_PORT;
 				httpPort = HARDCODED_HTTP_PORT;
@@ -95,7 +90,6 @@ public class Configuration {
 				if (currentMessage.isEmpty()) {
 					currentMessage = "current.wav";
 				}
-				// Speech.produce("default", "No arguments given.");
 				dumpToFile(properties);
 
 			} else if (args.length != 0) {
@@ -171,7 +165,6 @@ public class Configuration {
 		properties.setProperty("sip_port", sipPort);
 		properties.setProperty("http_port", httpPort);
 
-//		FileOutputStream fileOutputStream = new FileOutputStream(new File(workingFilePath));
 		FileOutputStream fileOutputStream = new FileOutputStream(new File(defaultFilePath));
 		properties.store(fileOutputStream, null);
 		fileOutputStream.flush();
@@ -385,10 +378,8 @@ public class Configuration {
 				}
 
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

@@ -14,7 +14,6 @@ public class Contact {
 	 */
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return "Contact:<sip:" + ipAddress + ":" + port + ">";
 	}
 
@@ -58,7 +57,6 @@ public class Contact {
 	 * 
 	 */
 	public Contact() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)

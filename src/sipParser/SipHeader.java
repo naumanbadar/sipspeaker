@@ -53,7 +53,6 @@ public class SipHeader {
 		try {
 			this.localIP = InetAddress.getLocalHost().getHostAddress();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.localUser = localUser;
@@ -151,8 +150,6 @@ public class SipHeader {
 		StringBuilder viaBuilder = new StringBuilder(via);
 		int indexOfrport = via.indexOf("rport");
 		viaBuilder.insert(indexOfrport + 5, "=" + contact.port + ";" + "received=" + contact.ipAddress);
-		// viaBuilder.insert(indexOfrport + 5, "=" + localPort + ";" +
-		// "received=" + contact.ipAddress);
 		appendedVia = viaBuilder.toString();
 
 		if (Integer.parseInt(contentLenght.trim())!=0) {
@@ -233,11 +230,9 @@ public class SipHeader {
 		StringBuilder sipHeaders = new StringBuilder();
 		sipHeaders.append("SIP/2.0 200 OK" + "\r\n");
 		appendCommonHeaders(sipHeaders);
-		// sipHeaders.append("Content-Length: " + sdpData.length() + "\r\n");
 		sipHeaders.append("Content-Length: 0" + "\r\n");
 		sipHeaders.append("Content-Type: application/sdp" + "\r\n");
 		sipHeaders.append("\r\n");
-		// sipHeaders.append(sdpData);
 
 		return sipHeaders.toString();
 	}

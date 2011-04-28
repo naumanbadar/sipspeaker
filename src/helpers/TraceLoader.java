@@ -34,10 +34,8 @@ public class TraceLoader {
 			traceString = traceString.trim();
 			fr.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return traceString;
@@ -48,20 +46,14 @@ public class TraceLoader {
 			Properties prop = new Properties();
 			prop.load(new FileInputStream("sip.properties"));
 			String receivedDataFilePath = prop.getProperty("receivedDataFilePath");
-//			File file = new File(receivedDataFilePath);
-//			PrintWriter pw = new PrintWriter(file, "UTF-8");
-//			pw.write(receivedData);
-//			pw.close();
 		
 			FileOutputStream fileOutputStream = new FileOutputStream(receivedDataFilePath);
 			DataOutputStream dataOutputStream = new DataOutputStream(fileOutputStream);
 			dataOutputStream.writeUTF(receivedData);
 			dataOutputStream.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

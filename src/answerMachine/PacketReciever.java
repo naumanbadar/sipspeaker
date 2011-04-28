@@ -48,7 +48,6 @@ public class PacketReciever {
 			receivedData = new String(datagramPacket.getData(), "UTF-8");
 			receivedData = receivedData.trim();
 
-			// if (receivedData.indexOf("INVITE sip:nauman")==0) {
 			if (receivedData.indexOf("INVITE sip:" + Configuration.INSTANCE.getSipUser() + "@") == 0) {
 				CallHandler.handleInvite(receivedData, datagramPacket, datagramSocket);
 			} else if (receivedData.indexOf("INVITE sip") == 0) {
@@ -61,14 +60,9 @@ public class PacketReciever {
 				CallHandler.handleBye(receivedData, datagramPacket, datagramSocket);
 			}
 			
-//			else if (receivedData.indexOf("CANCEL sip") == 0) {
-//				CallHandler.handleCancel(receivedData, datagramPacket, datagramSocket);
-//			}
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

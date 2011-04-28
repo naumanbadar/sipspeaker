@@ -45,7 +45,6 @@ public class WebServerStarter implements Runnable {
 				log.info("thread started for: "+clientSocket.getInetAddress().getHostName());
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

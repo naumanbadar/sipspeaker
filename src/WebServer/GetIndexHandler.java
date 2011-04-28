@@ -38,7 +38,6 @@ public class GetIndexHandler {
 			outputPrintWriter.print(indexFileString);
 			outputPrintWriter.flush();
 			
-//			log.info("Get request served "+completeHeader);
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

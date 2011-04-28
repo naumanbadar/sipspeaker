@@ -4,3 +4,5 @@ bin/
 *.logs
 *.zip
 *.xml
+SIPSpeaker.jar
+SIPSpeaker_lib

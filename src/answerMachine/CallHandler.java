@@ -37,14 +37,8 @@ public class CallHandler {
 				return;
 			}
 			log.info("Call accepted from " + datagramPacket.getAddress().getHostAddress() + ":" + datagramPacket.getPort());
-			// log.info("*********************************************Received Data\n"
-			// + receivedData.trim());
-			// SipHeader sipHeader = new SipHeader("5061", "IBN BAD'R",
-			// "IK2213_SIP_SPEAKER", receivedData);
 			SipHeader sipHeader = new SipHeader(Configuration.INSTANCE.getSipPort(), Configuration.INSTANCE.getSipUser(), "IK2213_SIP_SPEAKER", receivedData);
 
-			// log.info("*********************************************Sent OK\n"
-			// + sipHeader.produceSipOK());
 
 			byte[] byteBuffer = sipHeader.produceSipTrying().getBytes();
 			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
@@ -58,28 +52,13 @@ public class CallHandler {
 			datagramPacket.setData(byteBuffer);
 			datagramSocket.send(datagramPacket);
 
-			// byteBuffer = sipHeader.produceSipOK().getBytes();
-			// datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
-			// datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
-			// datagramPacket.setData(byteBuffer);
-			// datagramSocket.send(datagramPacket);
-
-			// Thread speakerThread = new Thread(new
-			// Speaker(sipHeader.getContact().getIpAddress(),
-			// sipHeader.getSipPort(),
-			// "/home/naumanbadar/Downloads/chaotic.wav"));
-			// Thread speakerThread = new Thread(new Speaker(sipHeader,
-			// datagramSocket, "/home/naumanbadar/Downloads/chaotic.wav"));
 			Thread speakerThread = new Thread(new Speaker(sipHeader, datagramSocket, Configuration.INSTANCE.getPlayMessage(), runningCalls));
 			Contact key2 = new Contact(datagramPacket.getAddress().getHostAddress(), Integer.toString(datagramPacket.getPort()));
 			runningCalls.put(key2, speakerThread);
 			speakerThread.start();
-			// log.info(key1+"*************"+key2);
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -93,8 +72,6 @@ public class CallHandler {
 		try {
 			SipHeader sipHeader = new SipHeader(Configuration.INSTANCE.getSipPort(), Configuration.INSTANCE.getSipUser(), "IK2213_SIP_SPEAKER", receivedData);
 
-			// log.info("*********************************************Sent OK\n"
-			// + sipHeader.produceSipOK());
 
 			byte[] byteBuffer = sipHeader.produceSipNotFound().getBytes();
 			datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
@@ -103,10 +80,8 @@ public class CallHandler {
 			datagramSocket.send(datagramPacket);
 
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -122,7 +97,6 @@ public class CallHandler {
 			SipHeader sipHeader = new SipHeader(Configuration.INSTANCE.getSipPort(), Configuration.INSTANCE.getSipUser(), "IK2213_SIP_SPEAKER", receivedData);
 
 			Contact key = new Contact(datagramPacket.getAddress().getHostAddress(), Integer.toString(datagramPacket.getPort()));
-			// log.info("key constructed: " + key);
 			if (!runningCalls.containsKey(key)) {
 				return;
 			}
@@ -131,15 +105,8 @@ public class CallHandler {
 			if (runningcall.isAlive()) {
 				runningcall.stop();
 			}
-			// log.info("registered in running calls register");
-
-			// log.info("Bye received");
-			// log.info(sipHeader.produceByeOK());
-			// log.info(receivedData);
 
 			byte[] byteBuffer = sipHeader.produceByeOK().getBytes();
-			// datagramPacket.setAddress(InetAddress.getByName(sipHeader.getContact().getIpAddress()));
-			// datagramPacket.setPort(Integer.parseInt(sipHeader.getContact().getPort()));
 			datagramPacket.setAddress(datagramPacket.getAddress());
 			datagramPacket.setPort(datagramPacket.getPort());
 			datagramPacket.setData(byteBuffer);
@@ -148,7 +115,6 @@ public class CallHandler {
 			log.info("Client hang up from " + datagramPacket.getAddress().getHostAddress() + ":" + datagramPacket.getPort());
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -163,7 +129,6 @@ public class CallHandler {
 			SipHeader sipHeader = new SipHeader(Configuration.INSTANCE.getSipPort(), Configuration.INSTANCE.getSipUser(), "IK2213_SIP_SPEAKER", receivedData);
 
 			Contact key = new Contact(datagramPacket.getAddress().getHostAddress(), Integer.toString(datagramPacket.getPort()));
-			// log.info("key constructed: " + key);
 			if (!runningCalls.containsKey(key)) {
 				return;
 			}
@@ -190,7 +155,6 @@ public class CallHandler {
 			log.info("Client cancelled from " + datagramPacket.getAddress().getHostAddress() + ":" + datagramPacket.getPort());
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -19,7 +19,6 @@ public class Listener implements Runnable{
 	private final static Logger log = Logger.getLogger(Listener.class.getName());
 
 	private Socket clientSocket;
-//	private int httpPort;
 
 	/**
 	 * 
@@ -31,25 +30,11 @@ public class Listener implements Runnable{
 	public String httpHandler() {
 		try {
 
-			// char charb[]= new char[2000];
-//			serverSocket = new ServerSocket(httpPort);
-			// serverSocket = new ServerSocket(8888);
-
-//			Socket clientSocket = serverSocket.accept();
 			BufferedReader inputBufferReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			PrintWriter outputPrintWriter = new PrintWriter(clientSocket.getOutputStream());
-			// while
-			// (inputStringBuilder.append(iputBufferReader.readLine()).length()<2000)
-			// {
 			String requestHeader;
-			// while ((inputString=iputBufferReader.readLine())!=null) {
-			// inputStringBuilder.append(inputString);
-			// // Pattern.matches("", input)
-			// }
 			requestHeader = inputBufferReader.readLine();
 
-			// this is just to get all the lines after header untill an empty
-			// line is not received.
 			StringBuilder completeHeader = new StringBuilder(requestHeader + "\r\n");
 			String readline;
 			while ((readline = inputBufferReader.readLine()) != "") { // to
@@ -75,13 +60,11 @@ public class Listener implements Runnable{
 				 log.info("view STATUS");
 			}
 
-			// ipbuff.read(charb);
 			outputPrintWriter.close();
 			inputBufferReader.close();
 			clientSocket.close();
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

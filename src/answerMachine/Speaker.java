@@ -135,7 +135,6 @@ public class Speaker implements Runnable {
 			final Format[] formats = new Format[] { new AudioFormat(AudioFormat.GSM_RTP) };
 			final ContentDescriptor contentDescriptor = new ContentDescriptor(ContentDescriptor.RAW_RTP);
 			File mediaFile = new File(pathToAudio);
-			// File mediaFile = new File("properties/surahBayyinah.mp3");
 			DataSource dataSource = Manager.createDataSource(new MediaLocator(mediaFile.toURL()));
 
 			Processor processor = Manager.createRealizedProcessor(new ProcessorModel(dataSource, formats, contentDescriptor));
@@ -146,9 +145,6 @@ public class Speaker implements Runnable {
 			dataSink.open();
 			dataSink.start();
 
-			// System.out.println(dataSource.getDuration().getNanoseconds());
-			// System.out.println((long) dataSource.getDuration().getSeconds());
-			// System.out.println((long) processor.getDuration().getSeconds());
 
 			Thread.sleep((long) (processor.getDuration().getSeconds() * 1000));
 
@@ -168,28 +164,20 @@ public class Speaker implements Runnable {
 			log.info("BYE sent to "+datagramPacket.getAddress().getHostAddress()+":"+datagramPacket.getPort());
 
 		} catch (NoDataSourceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoProcessorException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (CannotRealizeException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoDataSinkException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NotRealizedError e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

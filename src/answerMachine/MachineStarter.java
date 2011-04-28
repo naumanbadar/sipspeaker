@@ -24,7 +24,6 @@ public class MachineStarter {
 
 			Configuration.INSTANCE.insert(args);
 			DatagramSocket datagramSocket;
-			// log.info("current message set to :"+Configuration.INSTANCE.getCurrentMessage());
 
 			Thread webServerThread = new Thread(new WebServerStarter(Configuration.INSTANCE.getHttpPort()));
 			webServerThread.start();
@@ -37,7 +36,6 @@ public class MachineStarter {
 				PacketReciever.receive(datagramSocket);
 			}
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
